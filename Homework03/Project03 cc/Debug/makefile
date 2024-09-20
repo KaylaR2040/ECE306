@@ -14,9 +14,9 @@ ORDERED_OBJS += \
 "./led.obj" \
 "./main.obj" \
 "./ports.obj" \
+"./switches.obj" \
 "./system.obj" \
 "../Compiled/LCD.obj" \
-"../Compiled/switches.obj" \
 "../Compiled/timersB0.obj" \
 "../lnk_msp430fr2355.cmd" \
 $(GEN_CMDS__FLAG) \
@@ -151,8 +151,8 @@ Project03\ cc.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "Display.obj" "clocks.obj" "init.obj" "led.obj" "main.obj" "ports.obj" "system.obj" 
-	-$(RM) "Display.d" "clocks.d" "init.d" "led.d" "main.d" "ports.d" "system.d" 
+	-$(RM) "Display.obj" "clocks.obj" "init.obj" "led.obj" "main.obj" "ports.obj" "switches.obj" "system.obj" 
+	-$(RM) "Display.d" "clocks.d" "init.d" "led.d" "main.d" "ports.d" "switches.d" "system.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

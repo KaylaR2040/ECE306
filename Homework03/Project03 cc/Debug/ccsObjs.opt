@@ -4,9 +4,9 @@
 "./led.obj"
 "./main.obj"
 "./ports.obj"
+"./switches.obj"
 "./system.obj"
 "../Compiled/LCD.obj"
-"../Compiled/switches.obj"
 "../Compiled/timersB0.obj"
 "../lnk_msp430fr2355.cmd"
 -lfrwp_init.a
