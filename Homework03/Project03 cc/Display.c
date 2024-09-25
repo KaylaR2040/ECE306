@@ -21,6 +21,9 @@
 extern volatile unsigned char display_changed;
 extern volatile unsigned char update_display;
 
+extern volatile unsigned char backlight;
+extern volatile unsigned char backlight_changed;
+
 void Display_Process(void){
   if(update_display){
     update_display = 0;
@@ -29,5 +32,17 @@ void Display_Process(void){
       Display_Update(0,0,0,0);
     }
   }
+}
+
+void Backlight_Process(void){
+    if(backlight_changed){
+        backlight_changed = 0;
+        if(backlight){
+            P6OUT |= LCD_BACKLITE;
+        }
+        else {
+            P6OUT &= LCD_BACKLITE;
+        }
+    }
 }
 

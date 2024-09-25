@@ -6,8 +6,9 @@
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value="P5"/>
+		<item key="selection" value="segment_count"/>
 		<list key="findhistory">
+			<item value="segment_count"/>
 			<item value="P3"/>
 			<item value="init_Ports"/>
 			<item value="init"/>

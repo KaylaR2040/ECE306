@@ -30,6 +30,7 @@ void IR_LED_control(char selection);
 void Backlite_control(char selection);
 
   // LCD
+void Backlight_Process(void);
 void Display_Process(void);
 void Display_Update(char p_L1,char p_L2,char p_L3,char p_L4);
 void enable_display_update(void);

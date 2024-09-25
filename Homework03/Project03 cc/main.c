@@ -33,6 +33,8 @@ unsigned char display_mode;
 extern volatile unsigned char display_changed;
 extern volatile unsigned char update_display;
 extern volatile unsigned int update_display_count;
+extern volatile unsigned char backlight = 0;
+extern volatile unsigned char backlight_changed = 0;
 extern volatile unsigned int Time_Sequence;
 extern volatile char one_time;
 unsigned int test_value;
@@ -40,12 +42,14 @@ char chosen_direction;
 char change;
 unsigned int wheel_move;
 char forward;
+extern volatile unsigned int selected = 0;
 
 unsigned int Last_Time_Sequence = 0;  // To track changes in Time_Sequence
 unsigned int cycle_time = 0;          // Controls shape timings
 unsigned int time_change = 0;         // Flag to detect time sequence change
 extern volatile unsigned int Time_Sequence; // Already existing
 volatile unsigned char event;  // Event variable from switches.c (e.g., STRAIGHT, CIRCLE)
+extern volatile unsigned int event_Counter = 0; //picking the event based on increment
 volatile unsigned int state;   // To manage the state machine
 
 unsigned int delay_start;
@@ -55,6 +59,9 @@ unsigned int segment_count;
 
 
 void main(void){
+    selected = NONE;
+    event = NONE;
+    state = WAIT;
 //    WDTCTL = WDTPW | WDTHOLD;   // stop watchdog timer
 
 //------------------------------------------------------------------------------
@@ -78,27 +85,26 @@ void main(void){
   strcpy(display_line[2], "  ECE306  ");
   strcpy(display_line[3], "  GP I/O  ");
   display_changed = TRUE;
-//  Display_Update(0,0,0,0);
+  Display_Update(0,0,0,0);
+  display_changed = FALSE;
 
   wheel_move = 0;
   forward = TRUE;
 
+  backlight_changed = TRUE;
+  backlight = TRUE;
+  Backlight_Process();               // Turn Backlight on/off
 
 
-//  P6OUT |= L_FORWARD; // Set Port pin High [Wheel On]
-  P6OUT |= R_FORWARD; // Set Port pin High [Wheel On]
-//  P1OUT |= RED_LED; // Set Red LED On
-//  P1OUT &= ~RED_LED; // Set Red LED Off
-//  P6OUT |= ~LCD_BACKLITE; // Set Backlight on
-
-event = NONE;
-state = WAIT;
 //------------------------------------------------------------------------------
 // Beginning of the "While" Operating System
 //------------------------------------------------------------------------------
   while(ALWAYS) {                      // Can the Operating system run
 
       Switches_Process();                // Check for switch state change
+//      Carlson_StateMachine();            // Run a Time Based State Machine
+      Display_Process();                 // Update Display
+      P3OUT ^= TEST_PROBE;               // Change State of TEST_PROBE OFF
 
       // Time Sequence Handling
       if(Last_Time_Sequence != Time_Sequence){
@@ -106,23 +112,46 @@ state = WAIT;
           cycle_time++;
           time_change = 1;            // Flag to indicate a time change occurred
       }
+
       switch(event){
-      case STRAIGHT: // Straight
-          Run_Straight();
-      break; //
-      case CIRCLE: // Circle
-          Run_Circle();
-      break; //
-      default: break;
+                case STRAIGHT: // Straight
+                    Run_Straight();
+                break;
+                case CIRCLE: // Circle
+                    Run_Circle();
+                break;
+//                case TRIANGLE:
+//                break;
+//                case: FIGUREEIGHT:
+//                break;
+                default: break;
       }
-    Carlson_StateMachine();            // Run a Time Based State Machine
-    Display_Process();                 // Update Display
-    P3OUT ^= TEST_PROBE;               // Change State of TEST_PROBE OFF
-  }
+
+      }
+      // This will make it move
+
+
 //------------------------------------------------------------------------------
 
 }
+void Run_Straight(void) {
+          switch(state){
+              case WAIT: // Begin
+                  wait_case();
+                  break;
+              case START: // Begin
+                  start_case();
+                  break;
+              case RUN: // Run
+                  run_case();
+                  break;
+              case END: // End
+                  end_case();
+                  break; //
+              default: break;
+          }
 
+      }
 void Forward_On(void) {
     P6OUT |= L_FORWARD;   // Turn on the left motor (set pin high)
     P6OUT |= R_FORWARD;
@@ -142,23 +171,6 @@ void Run_Circle(void) {
     event = NONE;
 }
 
-void Run_Straight(void){
-    switch(state){
-        case WAIT: // Begin
-            wait_case();
-            break; //
-        case START: // Begin
-            start_case();
-            break; //
-        case RUN: // Run
-            run_case();
-            break; //
-        case END: // End
-            end_case();
-            break; //
-        default: break;
-    }
-}
 
 //The first state “WAIT” allows for the button to be pressed and time to move out of the way.
 void wait_case(void){
@@ -210,6 +222,7 @@ void end_case(void){
     Forward_Off();
     state = WAIT;
     event = NONE;
+    selected = NONE;
 }
 
 void Carlson_StateMachine(void){
