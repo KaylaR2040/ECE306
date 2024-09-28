@@ -20,17 +20,13 @@
 #define STRAIGHT ('L')
 #define CIRCLE ('C')
 #define TRIANGLE ('T')
+#define TRIANGLES ('S')
 #define FIGUREEIGHT ('F')
 #define EMPTY ('E')
 #define WAIT ('W')
 #define START ('S')
 #define RUN ('R')
 #define END ('E')
-#define WHEEL_COUNT_TIME (10)
-#define RIGHT_COUNT_TIME (7)
-#define LEFT_COUNT_TIME (8)
-#define TRAVEL_DISTANCE (2)
-#define WAITING2START (50)
 
 
 #endif /* MACROS_H_ */

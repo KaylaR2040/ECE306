@@ -15,6 +15,8 @@
 #include  "ports.h"
 #include "macros.h"
 #include "switches.h"
+#include "wheels.h"
+#include  <stdio.h>
 
 
 
@@ -42,24 +44,20 @@ char chosen_direction;
 char change;
 unsigned int wheel_move;
 char forward;
-extern volatile unsigned int selected = 0;
 
-unsigned int Last_Time_Sequence = 0;  // To track changes in Time_Sequence
-unsigned int cycle_time = 0;          // Controls shape timings
-unsigned int time_change = 0;         // Flag to detect time sequence change
+extern unsigned int Last_Time_Sequence = 0;  // To track changes in Time_Sequence
+extern unsigned int cycle_time = 0;          // Controls shape timings
+extern unsigned int time_change = 0;         // Flag to detect time sequence change
 extern volatile unsigned int Time_Sequence; // Already existing
 volatile unsigned char event;  // Event variable from switches.c (e.g., STRAIGHT, CIRCLE)
 extern volatile unsigned int event_Counter = 0; //picking the event based on increment
 volatile unsigned int state;   // To manage the state machine
 
-unsigned int delay_start;
-unsigned int left_motor_count;
-unsigned int right_motor_count;
-unsigned int segment_count;
+extern volatile unsigned int i;
+
 
 
 void main(void){
-    selected = NONE;
     event = NONE;
     state = WAIT;
 //    WDTCTL = WDTPW | WDTHOLD;   // stop watchdog timer
@@ -113,23 +111,7 @@ void main(void){
           time_change = 1;            // Flag to indicate a time change occurred
       }
 
-      switch(event){
-                case STRAIGHT: // Straight
-
-                Run_Shape();
-                break;
-                case CIRCLE: // Circle
-                    Run_Shape();
-                break;
-                case TRIANGLE:
-                    Run_Shape();
-                break;
-                case: FIGUREEIGHT:
-                    Run_Shape();
-                break;
-                default: break;
-      }
-
+      Wheel_Move();
       }
       // This will make it move
 

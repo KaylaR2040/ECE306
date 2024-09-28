@@ -21,7 +21,6 @@
 // Global Variables
 extern volatile unsigned char event;  // (e.g., STRAIGHT, CIRCLE)
 extern volatile unsigned int event_Counter;
-extern volatile unsigned int selected;
 extern volatile unsigned int Time_Sequence; // Already existing
 extern volatile unsigned int state;
 unsigned int okay_to_look_at_switch1;

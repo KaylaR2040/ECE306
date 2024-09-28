@@ -130,6 +130,14 @@ void five_msec_sleep(unsigned int msec);
 void measure_delay(void);
 void out_control_words(void);
 
+//WHEELS
+void Wheel_Move(void);
+void wait_case(void);
+void start_case(void);
+void run_case(void);
+void run_triangle(void);
+void end_case(void);
+void Run_Shape(void);
 
 
 

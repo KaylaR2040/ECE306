@@ -6,6 +6,7 @@
 "./ports.obj"
 "./switches.obj"
 "./system.obj"
+"./wheels.obj"
 "../Compiled/LCD.obj"
 "../Compiled/timersB0.obj"
 "../lnk_msp430fr2355.cmd"

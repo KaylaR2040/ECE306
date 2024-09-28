@@ -14,7 +14,8 @@ C_SRCS += \
 ../main.c \
 ../ports.c \
 ../switches.c \
-../system.c 
+../system.c \
+../wheels.c 
 
 C_DEPS += \
 ./Display.d \
@@ -24,7 +25,8 @@ C_DEPS += \
 ./main.d \
 ./ports.d \
 ./switches.d \
-./system.d 
+./system.d \
+./wheels.d 
 
 OBJS += \
 ./Display.obj \
@@ -34,7 +36,8 @@ OBJS += \
 ./main.obj \
 ./ports.obj \
 ./switches.obj \
-./system.obj 
+./system.obj \
+./wheels.obj 
 
 OBJS__QUOTED += \
 "Display.obj" \
@@ -44,7 +47,8 @@ OBJS__QUOTED += \
 "main.obj" \
 "ports.obj" \
 "switches.obj" \
-"system.obj" 
+"system.obj" \
+"wheels.obj" 
 
 C_DEPS__QUOTED += \
 "Display.d" \
@@ -54,7 +58,8 @@ C_DEPS__QUOTED += \
 "main.d" \
 "ports.d" \
 "switches.d" \
-"system.d" 
+"system.d" \
+"wheels.d" 
 
 C_SRCS__QUOTED += \
 "../Display.c" \
@@ -64,6 +69,7 @@ C_SRCS__QUOTED += \
 "../main.c" \
 "../ports.c" \
 "../switches.c" \
-"../system.c" 
+"../system.c" \
+"../wheels.c" 
 
 
