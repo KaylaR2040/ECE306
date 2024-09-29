@@ -135,7 +135,6 @@ void Wheel_Move(void);
 void wait_case(void);
 void start_case(void);
 void run_case(void);
-void run_triangle(void);
 void end_case(void);
 void Run_Shape(void);
 

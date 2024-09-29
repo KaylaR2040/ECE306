@@ -19,6 +19,7 @@
 
 
 
+
 volatile unsigned int state;   // To manage the state machine
 volatile unsigned char event;  // Event variable from switches.c (e.g., STRAIGHT, CIRCLE)
 extern volatile unsigned int event_Counter; //picking the event based on increment
@@ -58,9 +59,22 @@ switch(event){
 
                     Run_Shape();
                 break;
-                case TRIANGLE:
+                case TRIANGLE: //THIS IS THE 30 DEGREE TURN
+                    wheel_Counttime = 20;
+                    right_Counttime = 1;
+                    left_Counttime = 13;
+                    travel_Distance = 10;
+
                     Run_Shape();
 
+                break;
+                case TRIANGLES:
+                    wheel_Counttime = 11;
+                    right_Counttime = 11;
+                    left_Counttime = 9;
+                    travel_Distance = 32;
+
+                    Run_Shape();
                 break;
                 case FIGUREEIGHT:
                     wheel_Counttime = 10;
@@ -82,12 +96,7 @@ void Run_Shape(void) {
                   start_case();
                   break;
               case RUN: // Run
-                  if(event == TRIANGLE) {
-                      run_triangle();
-                  }
-                  else {
-                      run_case();
-                  }
+                  run_case();
                   break;
               case END: // End
                   end_case();
@@ -148,7 +157,7 @@ void run_case(void){
                 cycle_time = 0;
                 right_motor_count = 0;
                 left_motor_count = 0;
-//                segment_count++;
+                segment_count++;
                 Forward_Move();  // Trigger forward movement
             }
         }else{
@@ -157,75 +166,57 @@ void run_case(void){
     }
 }
 
-// This is for the triangle
-void run_triangle(void){
-    if(time_change){
-        time_change = 0;
-        if(triangleset % 2){
-            wheel_Counttime = 10;
-            right_Counttime = 0;
-            left_Counttime = 8;
-            travel_Distance = 10;
-            if(segment_count <= travel_Distance){
-                        if(right_motor_count++ >= right_Counttime){
-                            P6OUT &= ~R_FORWARD; //stop right motor
-                        }
-                        if(left_motor_count++ >= left_Counttime){
-                            P6OUT &= ~L_FORWARD; //stop left motor
-                        }
-                        if(cycle_time >= wheel_Counttime){
-                            cycle_time = 0;
-                            right_motor_count = 0;
-                            left_motor_count = 0;
-                            segment_count++;
-                            Forward_Move();  // Trigger forward movement
-                        }
-            }else{
-                triangleset++;
-                Forward_Off();
-                wait_case();
-                state = RUN;
-            }
-        }
-        else{
-            wheel_Counttime = 18;
-            right_Counttime = 10;
-            left_Counttime = 0;
-            travel_Distance = 8;
-            if(segment_count <= travel_Distance){
-                        if(right_motor_count++ >= right_Counttime){
-                            P6OUT &= ~R_FORWARD; //stop right motor
-                        }
-                        if(left_motor_count++ >= left_Counttime){
-                            P6OUT &= ~L_FORWARD; //stop left motor
-                        }
-                        if(cycle_time >= wheel_Counttime){
-                            cycle_time = 0;
-                            right_motor_count = 0;
-                            left_motor_count = 0;
-                            segment_count++;
-                            Forward_Move();  // Trigger forward movement
-                        }
-            }else{
-                triangleset++;
-                Forward_Off();
-                wait_case();
-                state = RUN;
-            }
-        }
-        if(triangleset == 6){
-            state  = END;
-        }
-    }
-}
+
+
+
+
+
+
 
 
 //The last state “END” clears the state machine back to NONE so it ends and movement over.
 void end_case(void){
     Forward_Off();
     state = WAIT;
-    event = NONE;
-    triangleset = 0;
+    switch (triangleset){
+    case 0:
+        event = NONE;
+        break;
+    case 1:
+        event = TRIANGLES;
+        triangleset++;
+        break;
+    case 2:
+        event = TRIANGLE;
+        triangleset++;
+        break;
+    case 3:
+        event = TRIANGLES;
+        triangleset++;
+        break;
+    case 4:
+        event = TRIANGLE;
+        triangleset++;
+        break;
+    case 5:
+        event = TRIANGLES;
+        triangleset++;
+        break;
+    case 6:
+        event = TRIANGLE;
+        triangleset++;
+        break;
+    case 7:
+        event = TRIANGLES;
+        triangleset++;
+        break;
+    case 8:
+        event = NONE;
+        triangleset = 0;
+        break;
+    default: break;
+    }
+
 
 }
 

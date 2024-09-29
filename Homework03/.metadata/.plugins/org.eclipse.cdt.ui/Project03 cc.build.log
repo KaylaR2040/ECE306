@@ -6,7 +6,6 @@
 Building file: "../wheels.c"
 Invoking: MSP430 Compiler
 "/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/bin/cl430" -vmspx --use_hw_mpy=F5 --include_path="/Applications/ti/ccs1280/ccs/ccs_base/msp430/include" --include_path="/Users/kaylaradu/GitHubRepos/ECE306/Homework03/Project03 cc" --include_path="/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include" --advice:power=all --advice:hw_config=all --define=__MSP430FR2355__ --define=_FRWP_ENABLE --define=_INFO_FRWP_ENABLE -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 --preproc_with_compile --preproc_dependency="wheels.d_raw"  "../wheels.c"
-"../wheels.c", line 164: remark #1530-D: (ULP 5.1) Detected modulo operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
 Finished building: "../wheels.c"
  
 Building target: "Project03 cc.out"

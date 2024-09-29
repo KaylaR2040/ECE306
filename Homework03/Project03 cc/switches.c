@@ -34,6 +34,7 @@ extern char display_line[4][11];
 extern char *display[4];
 extern volatile unsigned char display_changed;
 unsigned char eventlcd;
+extern volatile unsigned int triangleset;
 
 
 
@@ -133,6 +134,7 @@ void Switch2_Process(void){
                 break;
             case 2:
                 event = TRIANGLE;
+                triangleset = 1;
                 break;
             case 3:
                 event = FIGUREEIGHT;
