@@ -38,6 +38,7 @@ unsigned int right_Counttime;
 unsigned int left_Counttime;
 unsigned int travel_Distance;
 extern volatile unsigned int triangleset = 0;
+extern volatile unsigned int figureeightset = 0;
 
 
 void Wheel_Move(void) {
@@ -60,10 +61,10 @@ switch(event){
                     Run_Shape();
                 break;
                 case TRIANGLE: //THIS IS THE 30 DEGREE TURN
-                    wheel_Counttime = 20;
-                    right_Counttime = 1;
-                    left_Counttime = 13;
-                    travel_Distance = 10;
+                    wheel_Counttime = 15;
+                    right_Counttime = 0;
+                    left_Counttime = 9;
+                    travel_Distance = 11;
 
                     Run_Shape();
 
@@ -72,15 +73,37 @@ switch(event){
                     wheel_Counttime = 11;
                     right_Counttime = 11;
                     left_Counttime = 9;
-                    travel_Distance = 32;
+                    travel_Distance = 10;
 
                     Run_Shape();
                 break;
                 case FIGUREEIGHT:
-                    wheel_Counttime = 10;
-                    right_Counttime = 7;
-                    left_Counttime = 8;
-                    travel_Distance = 2;
+                    wheel_Counttime = 18;
+                    right_Counttime = 0;
+                    left_Counttime = 20;
+                    if(figureeightset == 3){
+                        travel_Distance = 21;
+                    }
+                    else if(figureeightset == 5){
+                        travel_Distance = 21;
+                    }
+                    else{
+                        travel_Distance = 11;
+                    }
+
+                    Run_Shape();
+                    break;
+                case FIGUREEIGHTT:
+                    wheel_Counttime = 18;
+                    right_Counttime = 20;
+                    left_Counttime = 0;
+                    if(figureeightset == 4){
+                        travel_Distance = 23;
+                    }
+                    else{
+                        travel_Distance = 22;
+                    }
+
                     Run_Shape();
                 break;
                 default: break;
@@ -180,7 +203,9 @@ void end_case(void){
     state = WAIT;
     switch (triangleset){
     case 0:
-        event = NONE;
+        if(figureeightset){
+          event = NONE;
+        }
         break;
     case 1:
         event = TRIANGLES;
@@ -211,11 +236,59 @@ void end_case(void){
         triangleset++;
         break;
     case 8:
+        event = TRIANGLE;
+        triangleset++;
+        break;
+    case 9:
+        event = TRIANGLES;
+        triangleset++;
+        break;
+    case 10:
+        event = TRIANGLE;
+        triangleset++;
+        break;
+    case 11:
+        event = TRIANGLES;
+        triangleset++;
+        break;
+    case 12:
+        event = TRIANGLE;
+        triangleset++;
+        break;
+    case 13:
         event = NONE;
         triangleset = 0;
         break;
     default: break;
     }
+    switch (figureeightset){
+        case 0:
+            if(!triangleset){
+              event = NONE;
+            }
+            break;
+        case 1:
+            event = FIGUREEIGHTT;
+            figureeightset++;
+            break;
+        case 2:
+            event = FIGUREEIGHT;
+            figureeightset++;
+            break;
+        case 3:
+            event = FIGUREEIGHTT;
+            figureeightset++;
+            break;
+        case 4:
+            event = FIGUREEIGHT;
+            figureeightset++;
+        break;
+        case 5:
+            event = NONE;
+            figureeightset = 0;
+            break;
+        default: break;
+        }
 
 
 }

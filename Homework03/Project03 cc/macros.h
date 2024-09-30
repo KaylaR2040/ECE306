@@ -22,6 +22,7 @@
 #define TRIANGLE ('T')
 #define TRIANGLES ('S')
 #define FIGUREEIGHT ('F')
+#define FIGUREEIGHTT ('M')
 #define EMPTY ('E')
 #define WAIT ('W')
 #define START ('S')
