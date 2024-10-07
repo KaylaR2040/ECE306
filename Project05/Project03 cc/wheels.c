@@ -20,6 +20,7 @@
 
 
 
+
 volatile unsigned int state;   // To manage the state machine
 volatile unsigned char event;  // Event variable from switches.c (e.g., STRAIGHT, CIRCLE)
 extern volatile unsigned int event_Counter; //picking the event based on increment
@@ -27,6 +28,7 @@ extern volatile unsigned int event_Counter; //picking the event based on increme
 extern unsigned int Last_Time_Sequence;  // To track changes in Time_Sequence
 extern unsigned int cycle_time;          // Controls shape timings
 extern unsigned int time_change;         // Flag to detect time sequence change
+ unsigned int Time_Sequence;
 
 unsigned int delay_start;
 unsigned int left_motor_count;
@@ -44,6 +46,9 @@ extern volatile unsigned int rdirection = 0;
 extern volatile unsigned int ldirection = 0;
 extern volatile unsigned int instruction;
 volatile unsigned char origevent;
+extern volatile unsigned int elapsed_time = 0;
+extern volatile unsigned int desiredtime= 0;
+extern volatile unsigned int desired_cycles = 0;
 
 extern char display_line[4][11];
 extern char *display[4];
@@ -51,91 +56,94 @@ extern volatile unsigned char display_changed;
 
 void Wheel_Move(void) {
 // This is going to be moving the car
+
+switch(origevent){
+    case PROJECTFIVE:
+        switch(instruction){
+            case 1:
+            travel_Distance = 16;
+            waitingtostart = 20;
+            event = STRAIGHTFW;
+            break;
+            case 2:
+            travel_Distance = 32;
+            waitingtostart = 140;
+            event = STRAIGHTBW;
+            break;
+            case 3:
+            travel_Distance = 16;
+            waitingtostart = 140;
+            event = STRAIGHTFW;
+            break;
+            case 4: 
+            travel_Distance = 42;
+            waitingtostart = 140;
+            event = SPINCLK;
+            break;
+            case 5:
+            travel_Distance = 42;
+            waitingtostart = 280;
+            event = SPINCOUNTERCLK;
+            break;
+            default: break;
+
+        }
+    break;
+    default: break;
+}
 switch(event){
-                case STRAIGHT: // Straight
-                    wheel_Counttime = 10;
-                    right_Counttime = 7;
-                    left_Counttime = 8;
-                    if(!instruction){
-                        travel_Distance = 3;
-                    }
+case STRAIGHT:
+    rdirection = REVERSE;
+    ldirection = REVERSE;
+    wheel_Counttime = 10;
+    right_Counttime = 7;
+    left_Counttime = 8;
+    travel_Distance = 5;
+    waitingtostart = 10;
+    Run_Shape();
+    break;
 
-                Run_Shape();
-                break;
-                case CIRCLE: // Circle
-                    wheel_Counttime = 18;
-                    right_Counttime = 1;
-                    left_Counttime = 20;
-                    travel_Distance = 75;
+    case STRAIGHTFW: // Straight
+        rdirection = FORWARD;
+        ldirection = FORWARD;
+        wheel_Counttime = 10;
+        right_Counttime = 7;
+        left_Counttime = 8;
+        if(!instruction){
+            travel_Distance = 5;
+        }
 
-                    Run_Shape();
-                break;
-                case TRIANGLE: //THIS IS THE 30 DEGREE TURN
-                    wheel_Counttime = 15;
-                    right_Counttime = 0;
-                    left_Counttime = 9;
-                    travel_Distance = 11;
-
-                    Run_Shape();
-
-                break;
-                case TRIANGLES:
-                    wheel_Counttime = 11;
-                    right_Counttime = 11;
-                    left_Counttime = 9;
-                    travel_Distance = 10;
-
-                    Run_Shape();
-                break;
-                case FIGUREEIGHT:
-                    wheel_Counttime = 18;
-                    right_Counttime = 0;
-                    left_Counttime = 20;
-                    if(figureeightset == 3){
-                        travel_Distance = 21;
-                    }
-                    else if(figureeightset == 5){
-                        travel_Distance = 21;
-                    }
-                    else{
-                        travel_Distance = 11;
-                    }
-
-                    Run_Shape();
-                    break;
-                case FIGUREEIGHTT:
-                    wheel_Counttime = 18;
-                    right_Counttime = 20;
-                    left_Counttime = 0;
-                    if(figureeightset == 4){
-                        travel_Distance = 23;
-                    }
-                    else{
-                        travel_Distance = 22;
-                    }
-
-                    Run_Shape();
-                break;
-                case PROJECTFIVE:
-                    wheel_Counttime = 10;
-                    right_Counttime = 7;
-                    left_Counttime = 8;
-                    if(!instruction){
-                        travel_Distance = 10;
-                    }
-                    Run_Shape();
-                    break;
-                case SPINNING:
-                wheel_Counttime = 10;
-                if(!instruction){
-                    travel_Distance = 10;
-                    right_Counttime = 7;
-                    left_Counttime = 8;
-                }
-                Run_Shape();
-
-                default: break;
-      }
+    Run_Shape();
+    break;
+    case STRAIGHTBW: //Backwards
+    rdirection = REVERSE;
+    ldirection = REVERSE;
+    wheel_Counttime = 10;
+    right_Counttime = 7;
+    left_Counttime = 8;
+    if(!instruction){
+        travel_Distance = 5;
+    }
+    Run_Shape();
+    break;
+    case SPINCLK:
+        rdirection = FORWARD;
+        ldirection = REVERSE;
+        wheel_Counttime = 10;
+        right_Counttime = 7;
+        left_Counttime = 8;
+    Run_Shape();
+    break;
+    case SPINCOUNTERCLK:
+        rdirection = REVERSE;
+        ldirection = FORWARD;
+        wheel_Counttime = 10;
+        right_Counttime = 7;
+        left_Counttime = 8;
+    Run_Shape();
+    break;
+    default: break;
+}
 }
 
 void Run_Shape(void) {
@@ -157,29 +165,57 @@ void Run_Shape(void) {
 
 
       }
-void Forward_On(void) {
+void LForward_On(void) {
     P6OUT |= L_FORWARD;   // Turn on the left motor (set pin high)
+}
+void RForward_On(void) {
     P6OUT |= R_FORWARD;
 }
 
-void Forward_Off(void){
+void LForward_Off(void){
     P6OUT &= ~L_FORWARD;  // Turn off the left motor (set pin low)
-    P6OUT &= ~R_FORWARD;  // Turn off the right motor (set pin low)
 }
-void Reverse_On(void) {
+void RForward_Off(void){
+    P6OUT &= ~R_FORWARD;  // Turn off the left motor (set pin low)
+}
+void LReverse_On(void) {
     P6OUT |= L_REVERSE;   // Turn on the left motor (set pin high)
+}
+void RReverse_On(void){
     P6OUT |= R_REVERSE;
 }
-void Reverse_Off(void){
+void LReverse_Off(void){
     P6OUT &= ~L_REVERSE;  // Turn off the left motor (set pin low)
-    P6OUT &= ~R_REVERSE;  // Turn off the right motor (set pin low)
+}
+void RReverse_Off(void){
+    P6OUT &= ~R_REVERSE;  // Turn off the left motor (set pin low)
+}
+void Forward_Off(void){
+    P6OUT &= ~L_FORWARD;
+    P6OUT &= ~R_FORWARD;
+
+}
+void Reverse_Off(void){
+    P6OUT &= ~L_REVERSE;
+    P6OUT &= ~R_REVERSE;
+
 }
 
 void Forward_Move(void) {
-    Forward_On();
+    if(ldirection == FORWARD){
+        LForward_On();
+    }
+    if(rdirection == FORWARD){
+        RForward_On();
+    }
 }
 void Reverse_Move(void) {
-    Reverse_On();
+    if(ldirection == REVERSE){
+        LReverse_On();
+    }
+    if(rdirection == REVERSE){
+        RReverse_On();
+    }
 }
 
 
@@ -187,9 +223,6 @@ void Reverse_Move(void) {
 void wait_case(void){
     if(time_change){
         time_change = 0;
-        if(!instruction){
-            waitingtostart = WAITING2START;
-        }
         if(delay_start++ >= waitingtostart){
             delay_start = 0;
             state = START;
@@ -199,6 +232,7 @@ void wait_case(void){
 
 //The second state “START” sets the initial condition.
 void start_case(void){
+    Display_Changing();
     cycle_time = 0;
     right_motor_count = 0;
     left_motor_count = 0;
@@ -213,18 +247,18 @@ void run_case(void){
         if(segment_count <= travel_Distance){
             if(right_motor_count++ >= right_Counttime){
                 if(rdirection == FORWARD){
-                    P6OUT &= ~R_FORWARD; //stop right motor
+                    RForward_Off();
                 }
                 else {
-                    P6OUT &= ~R_REVERSE; //stop right motor
+                    RReverse_Off(); //stop right motor
                 }
             }
             if(left_motor_count++ >= left_Counttime){
                 if(ldirection == FORWARD){
-                    P6OUT &= ~L_FORWARD; //stop left motor
+                    LForward_Off(); //stop left motor
                 }
                 else {
-                    P6OUT &= ~L_REVERSE; //stop left motor
+                    RReverse_Off();
                 }
 
             }
@@ -233,12 +267,8 @@ void run_case(void){
                 right_motor_count = 0;
                 left_motor_count = 0;
                 segment_count++;
-                if(rdirection == FORWARD || ldirection == FORWARD){
-                    Forward_Move();  // Trigger forward movement
-                }
-                else if(rdirection == REVERSE || ldirection == REVERSE){
-                    Reverse_Move();
-                }
+                Forward_Move();
+                Reverse_Move();
             }
         }else{
             state = END;
@@ -259,144 +289,22 @@ void end_case(void){
     Reverse_Off();
     Forward_Off();
     state = WAIT;
-    switch (triangleset){
-    case 0:
-        if(figureeightset){
-          event = NONE;
-        }
-        break;
-    case 1:
-        event = TRIANGLES;
-        triangleset++;
-        break;
-    case 2:
-        event = TRIANGLE;
-        triangleset++;
-        break;
-    case 3:
-        event = TRIANGLES;
-        triangleset++;
-        break;
-    case 4:
-        event = TRIANGLE;
-        triangleset++;
-        break;
-    case 5:
-        event = TRIANGLES;
-        triangleset++;
-        break;
-    case 6:
-        event = TRIANGLE;
-        triangleset++;
-        break;
-    case 7:
-        event = TRIANGLES;
-        triangleset++;
-        break;
-    case 8:
-        event = TRIANGLE;
-        triangleset++;
-        break;
-    case 9:
-        event = TRIANGLES;
-        triangleset++;
-        break;
-    case 10:
-        event = TRIANGLE;
-        triangleset++;
-        break;
-    case 11:
-        event = TRIANGLES;
-        triangleset++;
-        break;
-    case 12:
-        event = TRIANGLE;
-        triangleset++;
-        break;
-    case 13:
-        event = NONE;
-        triangleset = 0;
-        break;
-    default: break;
-    }
-    switch (figureeightset){
-        case 0:
-            if(!triangleset){
-              event = NONE;
-            }
-            break;
-        case 1:
-            event = FIGUREEIGHTT;
-            figureeightset++;
-            break;
-        case 2:
-            event = FIGUREEIGHT;
-            figureeightset++;
-            break;
-        case 3:
-            event = FIGUREEIGHTT;
-            figureeightset++;
-            break;
-        case 4:
-            event = FIGUREEIGHT;
-            figureeightset++;
-        break;
-        case 5:
-            event = NONE;
-            figureeightset = 0;
-            break;
-        default: break;
-        if(origevent == PROJECTFIVE){
-            projectfive();
-        }
-        }
+    event = NONE;
+    figureeightset = 0;
 
-
-}
-
-void projectfive(void){
-    switch(instruction -1){
-    case 0:
-        rdirection = REVERSE;
-        ldirection = REVERSE;
-        travel_Distance = 10;
-        waitingtostart = 50;
-        instruction++;
-        event = PROJECTFIVE;
-        break;
-    case 1:
-        rdirection = FORWARD;
-        ldirection = FORWARD;
-        travel_Distance = 10;
-        waitingtostart = 50;
-        instruction++;
-        event = PROJECTFIVE;
-        break;
-    case 2:
-        rdirection = FORWARD;
-        ldirection = REVERSE;
-        travel_Distance = 10;
-        right_Counttime = 7;
-        left_Counttime = 8;
-        instruction++;
-        event = SPINNING;
-        break;
-    case 3:
-        rdirection = REVERSE;
-        ldirection = FORWARD;
-        travel_Distance = 10;
-        right_Counttime = 7;
-        left_Counttime = 8;
-        instruction++;
-        event = SPINNING;
-        break;
-    case 4:
-        event = NONE;
+    if(instruction == 5){
         instruction = 0;
-        break;
-    default: break;
+        event = NONE;
+        origevent = NONE;
+        Display_Changing();
     }
+    else{
+        instruction++;
+    }
+
 }
+
+
 
 void motorDirec(void){
     if(((P6IN & L_FORWARD)&&(P6IN & L_REVERSE))||((P6IN & R_FORWARD)&&(P6IN & R_REVERSE))){
@@ -410,25 +318,34 @@ void motorDirec(void){
 
 void Display_Changing(void){
         strcpy(display_line[0], "          ");
-        strcpy(display_line[1], "          ");
-
-        char newlinner[11]; // 10 characters
-        char newlin[11]; // 10 characters
-        char dire = "_";
-        if(rdirection == FORWARD && ldirection == REVERSE){
-            dire = "C";
+        if(origevent == PROJECTFIVE){
+            strcpy(display_line[1], "PROJECT 5 ");
         }
-        else if(rdirection == REVERSE && ldirection == FORWARD){
-            dire = ")";
+        else{
+            strcpy(display_line[1], "          ");
         }
-        sprintf(newlinner, "     %c     ", event); // Fill with 5 spaces, the event character, and 5 more spaces
-        strncpy(display_line[2], newlinner, 10); // Copy exactly 10 characters into display_line[2]
-
-
-        sprintf(newlin, "     %c     ", dire); // Fill with 5 spaces, the event character, and 5 more spaces
-        strncpy(display_line[3], newlin, 10); // Copy exactly 10 characters into display_line[2]
-
+        switch(instruction){
+        case 0:
+            strcpy(display_line[2], " ALL DONE ");
+            break;
+        case 1:
+            strcpy(display_line[2], "STRAIGHTFW");
+            break;
+        case 2:
+            strcpy(display_line[2], "STRAIGHTBW");
+            break;
+        case 3:
+            strcpy(display_line[2], "STRAIGHTFW");
+            break;
+        case 4:
+            strcpy(display_line[2], "SPINNINGCL");
+            break;
+        case 5:
+            strcpy(display_line[2], "SPINNINGCC");
+            break;
+        default:break;
+        }
+        strcpy(display_line[3], "          ");
         display_changed = TRUE;
 
 }
-
