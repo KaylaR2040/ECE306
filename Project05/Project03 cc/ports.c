@@ -91,11 +91,14 @@ P2SEL1 &= ~IR_LED; // P2_2 GPIO operation
 P2OUT &= ~IR_LED; // Initial Value = Low / Off
 P2DIR |= IR_LED; // Direction = input
 
-P2SEL0 &= ~SW2; // SW2 Operation
-P2SEL1 &= ~SW2; // SW2 Operation
-P2OUT |= SW2; // Configure pullup resistor
-P2DIR &= ~SW2; // Direction = input
-P2REN |= SW2; // Enable pullup resistor
+P2SEL0 &= ~SW2; // SW1 set as I/0
+P2SEL1 &= ~SW2; // SW1 set as I/0
+P2DIR &= ~SW2; // SW1 Direction = input
+P2PUD |= SW2; // Configure pull-up resistor SW1
+P2REN |= SW2; // Enable pull-up resistor SW1
+P2IES |= SW2; // SW1 Hi/Lo edge interrupt
+P2IFG &= ~SW2; // IFG SW1 cleared
+P2IE |= SW2; // SW1 interrupt Enabled
 
 P2SEL0 &= ~IOT_RUN_CPU; // IOT_RUN_CPU GPIO operation
 P2SEL1 &= ~IOT_RUN_CPU; // IOT_RUN_CPU GPIO operation
@@ -161,16 +164,20 @@ void Init_Port4(void){ // Configure PORT 4
 P4OUT = 0x00; // P4 set Low
 P4DIR = 0x00; // Set P4 direction to output
 
+P4SEL0 &= ~SW1; // SW1 set as I/0
+P4SEL1 &= ~SW1; // SW1 set as I/0
+P4DIR &= ~SW1; // SW1 Direction = input
+P4PUD |= SW1; // Configure pull-up resistor SW1
+P4REN |= SW1; // Enable pull-up resistor SW1
+P4IES |= SW1; // SW1 Hi/Lo edge interrupt
+P4IFG &= ~SW1; // IFG SW1 cleared
+P4IE |= SW1; // SW1 interrupt Enabled
+
+
 P4SEL0 &= ~RESET_LCD; // RESET_LCD GPIO operation
 P4SEL1 &= ~RESET_LCD; // RESET_LCD GPIO operation
 P4OUT &= ~RESET_LCD; // Initial Value = Low / Off
 P4DIR |= RESET_LCD; // Direction = output
-
-P4SEL0 &= ~SW1; // SW1 GPIO operation
-P4SEL1 &= ~SW1; // SW1 GPIO operation
-P4OUT |= SW1; // Configure pullup resistor
-P4DIR &= ~SW1; // Direction = input
-P4REN |= SW1; // Enable pullup resistor
 
 P4SEL0 |= UCA1RXD; // USCI_A1 UART operation
 P4SEL1 &= ~UCA1RXD; // USCI_A1 UART operation
@@ -192,6 +199,7 @@ P4SEL0 |= UCB1SOMI; // UCB1SOMI SPI BUS operation
 P4SEL1 &= ~UCB1SOMI; // UCB1SOMI SPI BUS operation
 //------------------------------------------------------------------------------
 }
+//--------------------------------------------------------------------
 
 
 // The initilization of port 5 by setting the values to low/ high depending on the drawings.

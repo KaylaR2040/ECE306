@@ -90,9 +90,9 @@ void main(void){
     wheel_move = 0;
     forward = TRUE;
 
-    backlight_changed = TRUE;
-    backlight = TRUE;
-    Backlight_Process();               // Turn Backlight on/off
+//    backlight_changed = TRUE;
+//    backlight = TRUE;
+//    Backlight_Process();               // Turn Backlight on/off
 
 
     //------------------------------------------------------------------------------
@@ -100,7 +100,6 @@ void main(void){
     //------------------------------------------------------------------------------
     while(ALWAYS) {                      // Can the Operating system run
 
-        Switches_Process();                // Check for switch state change
         //      Carlson_StateMachine();            // Run a Time Based State Machine
         Display_Process();                 // Update Display
         P3OUT ^= TEST_PROBE;               // Change State of TEST_PROBE OFF
@@ -112,20 +111,17 @@ void main(void){
             time_change = 1;            // Flag to indicate a time change occurred
         }
 
-        Wheel_Move();
-        motorDirec();
-        //      if(!instruction){
-        //      Display_Changing();
-        //      }
 
+//      Wheel_Move();
+        motorDirec();
+        Debounce_State();
     }
-    // This will make it move
+
 
 
     //------------------------------------------------------------------------------
 
 }
-
 
 void Carlson_StateMachine(void){
     switch(Time_Sequence){

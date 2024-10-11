@@ -35,13 +35,8 @@ unsigned int left_motor_count;
 unsigned int right_motor_count;
 unsigned int segment_count;
 
-unsigned int wheel_Counttime;
-unsigned int right_Counttime;
-unsigned int left_Counttime;
-unsigned int travel_Distance;
+
 unsigned int waitingtostart;
-extern volatile unsigned int triangleset = 0;
-extern volatile unsigned int figureeightset = 0;
 extern volatile unsigned int rdirection = 0;
 extern volatile unsigned int ldirection = 0;
 extern volatile unsigned int instruction;
@@ -53,118 +48,114 @@ extern volatile unsigned int desired_cycles = 0;
 extern char display_line[4][11];
 extern char *display[4];
 extern volatile unsigned char display_changed;
+extern volatile unsigned int switchpressed;
 
 void Wheel_Move(void) {
-// This is going to be moving the car
-
-switch(origevent){
-    case PROJECTFIVE:
-        switch(instruction){
-            case 1:
-            travel_Distance = 16;
-            waitingtostart = 20;
-            event = STRAIGHTFW;
-            break;
-            case 2:
-            travel_Distance = 32;
-            waitingtostart = 140;
-            event = STRAIGHTBW;
-            break;
-            case 3:
-            travel_Distance = 16;
-            waitingtostart = 140;
-            event = STRAIGHTFW;
-            break;
-            case 4: 
-            travel_Distance = 42;
-            waitingtostart = 140;
-            event = SPINCLK;
-            break;
-            case 5:
-            travel_Distance = 42;
-            waitingtostart = 280;
-            event = SPINCOUNTERCLK;
-            break;
-            default: break;
-
-        }
-    break;
-    default: break;
-}
-switch(event){
-case STRAIGHT:
-    rdirection = REVERSE;
-    ldirection = REVERSE;
-    wheel_Counttime = 10;
-    right_Counttime = 7;
-    left_Counttime = 8;
-    travel_Distance = 5;
-    waitingtostart = 10;
-    Run_Shape();
-    break;
-
-    case STRAIGHTFW: // Straight
-        rdirection = FORWARD;
-        ldirection = FORWARD;
-        wheel_Counttime = 10;
-        right_Counttime = 7;
-        left_Counttime = 8;
-        if(!instruction){
-            travel_Distance = 5;
-        }
-
-    Run_Shape();
-    break;
-    case STRAIGHTBW: //Backwards
-    rdirection = REVERSE;
-    ldirection = REVERSE;
-    wheel_Counttime = 10;
-    right_Counttime = 7;
-    left_Counttime = 8;
-    if(!instruction){
-        travel_Distance = 5;
+    if(switchpressed){
+        switch(Time_Sequence){
+        case ONESEC: // 1st second
+                     strcpy(display_line[0], "          ");
+                     strcpy(display_line[1], " FORWARDS ");
+                     strcpy(display_line[2], "ONE SECOND");
+                     strcpy(display_line[3], "          ");
+                     display_changed = TRUE;
+                     ldirection = FORWARD;
+                     rdirection = FORWARD;
+                     Off_Case();
+                     Forward_Move();
+                     break; //
+                 case TWO_SECONDS*ONESEC:
+                     strcpy(display_line[0], "          ");
+                     strcpy(display_line[1], "  WAIT    ");
+                     strcpy(display_line[2], "ONE SECOND");
+                     strcpy(display_line[3], "          ");
+                     display_changed = TRUE;
+                     Off_Case();
+                     break;
+                 case THREE_SECONDS*ONESEC:
+                     strcpy(display_line[0], "          ");
+                     strcpy(display_line[1], "  REVERSE ");
+                     strcpy(display_line[2], "TWOSECONDS");
+                     strcpy(display_line[3], "          ");
+                     display_changed = TRUE;
+                     ldirection = REVERSE;
+                     rdirection = REVERSE;
+                     Off_Case();
+                     Reverse_Move();
+                     break;
+                 case FIVE_SECONDS*ONESEC:
+                     strcpy(display_line[0], "          ");
+                     strcpy(display_line[1], "  WAIT    ");
+                     strcpy(display_line[2], "ONE SECOND");
+                     strcpy(display_line[3], "          ");
+                     display_changed = TRUE;
+                     Off_Case();
+                     break; //
+                 case SIX_SECONDS*ONESEC:
+                     strcpy(display_line[0], "          ");
+                     strcpy(display_line[1], " FORWARDS ");
+                     strcpy(display_line[2], "ONE SECOND");
+                     strcpy(display_line[3], "          ");
+                     display_changed = TRUE;
+                     ldirection = FORWARD;
+                     rdirection = FORWARD;
+                     Off_Case();
+                     Forward_Move();
+                     break;
+                 case SEVEN_SECONDS*ONESEC:
+                     strcpy(display_line[0], "          ");
+                     strcpy(display_line[1], "  WAIT    ");
+                     strcpy(display_line[2], "ONE SECOND");
+                     strcpy(display_line[3], "          ");
+                     display_changed = TRUE;
+                     Off_Case();
+                     break;
+                 case EIGHT_SECONDS*ONESEC:
+                     strcpy(display_line[0], "          ");
+                     strcpy(display_line[1], " CLOCKWISE");
+                     strcpy(display_line[2], " THREESECS");
+                     strcpy(display_line[3], "          ");
+                     display_changed = TRUE;
+                     Off_Case();
+                     rdirection = FORWARD;
+                     ldirection = REVERSE;
+                     Forward_Move();
+                     Reverse_Move();
+                     break;
+                 case TEN_SECONDS*ONESEC:
+                     strcpy(display_line[0], "          ");
+                     strcpy(display_line[1], "  WAIT    ");
+                     strcpy(display_line[2], "TWOSECONDS");
+                     strcpy(display_line[3], "          ");
+                     display_changed = TRUE;
+                     Off_Case();
+                     break;
+                 case TWELVE_SECONDS*ONESEC:
+                     strcpy(display_line[0], "          ");
+                     strcpy(display_line[1], " CCLKWISE ");
+                     strcpy(display_line[2], " THREESECS");
+                     strcpy(display_line[3], "          ");
+                     display_changed = TRUE;
+                     ldirection = FORWARD;
+                     rdirection = REVERSE;
+                     Forward_Move();
+                     Reverse_Move();
+                     break;
+                 case FOURTEEN_SECONDS*ONESEC:
+                     strcpy(display_line[0], "          ");
+                     strcpy(display_line[1], "  WAIT    ");
+                     strcpy(display_line[2], "TWOSECONDS");
+                     strcpy(display_line[3], "          ");
+                     display_changed = TRUE;
+                     Off_Case();
+                     break;
+                 default: break;
     }
-    Run_Shape();
-    break;
-    case SPINCLK:
-        rdirection = FORWARD;
-        ldirection = REVERSE;
-        wheel_Counttime = 10;
-        right_Counttime = 7;
-        left_Counttime = 8;
-    Run_Shape();
-    break;
-    case SPINCOUNTERCLK:
-        rdirection = REVERSE;
-        ldirection = FORWARD;
-        wheel_Counttime = 10;
-        right_Counttime = 7;
-        left_Counttime = 8;
-    Run_Shape();
-    break;
-    default: break;
-}
+    }
 }
 
-void Run_Shape(void) {
-          switch(state){
-              case WAIT: // Begin
-                  wait_case();
-                  break;
-              case START: // Begin
-                  start_case();
-                  break;
-              case RUN: // Run
-                  run_case();
-                  break;
-              case END: // End
-                  end_case();
-                  break; //
-              default: break;
-          }
 
 
-      }
 void LForward_On(void) {
     P6OUT |= L_FORWARD;   // Turn on the left motor (set pin high)
 }
@@ -217,91 +208,9 @@ void Reverse_Move(void) {
         RReverse_On();
     }
 }
-
-
-//The first state “WAIT” allows for the button to be pressed and time to move out of the way.
-void wait_case(void){
-    if(time_change){
-        time_change = 0;
-        if(delay_start++ >= waitingtostart){
-            delay_start = 0;
-            state = START;
-        }
-    }
-}
-
-//The second state “START” sets the initial condition.
-void start_case(void){
-    Display_Changing();
-    cycle_time = 0;
-    right_motor_count = 0;
-    left_motor_count = 0;
-    segment_count = 0;
-    state = RUN;
-}
-
-//The third state “RUN” controls the movement.
-void run_case(void){
-    if(time_change){
-        time_change = 0;
-        if(segment_count <= travel_Distance){
-            if(right_motor_count++ >= right_Counttime){
-                if(rdirection == FORWARD){
-                    RForward_Off();
-                }
-                else {
-                    RReverse_Off(); //stop right motor
-                }
-            }
-            if(left_motor_count++ >= left_Counttime){
-                if(ldirection == FORWARD){
-                    LForward_Off(); //stop left motor
-                }
-                else {
-                    RReverse_Off();
-                }
-
-            }
-            if(cycle_time >= wheel_Counttime){
-                cycle_time = 0;
-                right_motor_count = 0;
-                left_motor_count = 0;
-                segment_count++;
-                Forward_Move();
-                Reverse_Move();
-            }
-        }else{
-            state = END;
-        }
-    }
-}
-
-
-
-
-
-
-
-
-
-//The last state “END” clears the state machine back to NONE so it ends and movement over.
-void end_case(void){
-    Reverse_Off();
+void Off_Case(void){
     Forward_Off();
-    state = WAIT;
-    event = NONE;
-    figureeightset = 0;
-
-    if(instruction == 5){
-        instruction = 0;
-        event = NONE;
-        origevent = NONE;
-        Display_Changing();
-    }
-    else{
-        instruction++;
-    }
-
+    Reverse_Off();
 }
 
 
@@ -312,40 +221,5 @@ void motorDirec(void){
         Forward_Off();
         Reverse_Off();
     }
-
-}
-
-
-void Display_Changing(void){
-        strcpy(display_line[0], "          ");
-        if(origevent == PROJECTFIVE){
-            strcpy(display_line[1], "PROJECT 5 ");
-        }
-        else{
-            strcpy(display_line[1], "          ");
-        }
-        switch(instruction){
-        case 0:
-            strcpy(display_line[2], " ALL DONE ");
-            break;
-        case 1:
-            strcpy(display_line[2], "STRAIGHTFW");
-            break;
-        case 2:
-            strcpy(display_line[2], "STRAIGHTBW");
-            break;
-        case 3:
-            strcpy(display_line[2], "STRAIGHTFW");
-            break;
-        case 4:
-            strcpy(display_line[2], "SPINNINGCL");
-            break;
-        case 5:
-            strcpy(display_line[2], "SPINNINGCC");
-            break;
-        default:break;
-        }
-        strcpy(display_line[3], "          ");
-        display_changed = TRUE;
 
 }

@@ -134,9 +134,9 @@ void out_control_words(void);
 void Wheel_Move(void);
 void wait_case(void);
 void start_case(void);
-void run_case(void);
-void end_case(void);
-void Run_Shape(void);
+void Off_Case(void);
+void Reverse_Move(void);
+void Forward_Move(void);
 
 
 
