@@ -28,6 +28,10 @@ extern volatile unsigned int debounce_statesw2;
 extern volatile unsigned char display_changed;
 extern char display_line[4][11];
 extern char *display[4];
+extern volatile unsigned int backlight;
+extern volatile unsigned char backlight_changed;
+extern volatile unsigned int enableleft = 1;
+extern volatile unsigned int enableright = 1;
 
 
 
@@ -48,6 +52,8 @@ void enable_switch_SW2(void){
 void enable_switches(void){
     enable_switch_SW1();
     enable_switch_SW2();
+    enableright = 1;
+    enableleft = 1;
 }
 
 
@@ -88,6 +94,11 @@ __interrupt void switchP4_interrupt(void){
         strcpy(display_line[2], "          ");
         strcpy(display_line[3], " SWITCH 1 ");
         display_changed = TRUE;
+        enableleft = 0;
+        backlight = 0;
+        backlight_changed = 1;
+        P4IE &= ~SW1;
+
 
     }
 }
@@ -107,6 +118,12 @@ __interrupt void switchP2_interrupt(void){
         strcpy(display_line[2], "          ");
         strcpy(display_line[3], " SWITCH 2 ");
         display_changed = TRUE;
+        backlight = 0;
+        backlight_changed = TRUE;
+        enableright = 0;
+        P2IE &= ~SW2;
+
+
 
     }
 }
@@ -117,12 +134,14 @@ void Debounce_State(void){
         if(count_debounce_SW1 >= DEBOUNCE_TIME){
             debounce_statesw1 = OFF;
             enable_switches();
+            P4IE |= SW1;
         }
     }
     if(debounce_statesw2){
         if(count_debounce_SW2 >= DEBOUNCE_TIME){
             debounce_statesw2 = OFF;
             enable_switches();
+            P2IE |= SW2;
         }
     }
 }

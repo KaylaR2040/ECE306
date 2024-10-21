@@ -111,7 +111,7 @@ void main(void){
             time_change = 1;            // Flag to indicate a time change occurred
         }
 
-
+        Backlight_Process();
 //      Wheel_Move();
         motorDirec();
         Debounce_State();

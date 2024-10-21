@@ -5,7 +5,7 @@
    <string>defaultSolution</string>
    <void method="set">
     <object idref="SolutionManager$PersistState0"/>
-    <string>/Users/kaylaradu/GitHubRepos/ECE306/Project05/dvt/AnalysisSolutionsTemp/AnalysisSolution1728476920339/null</string>
+    <string>/Applications/ti/ccs1280/ccs/ccs_base/dvt_4.1.0.202307061549/CodeGen/solutions/CodeGenCoverage</string>
    </void>
   </void>
  </object>
@@ -14,10 +14,10 @@
  <void id="ArrayList0" method="get">
   <object idref="SolutionManager$PersistState0"/>
   <void method="add">
-   <string>/Applications/ti/ccs1280/ccs/ccs_base/dvt_4.1.0.202307061549/CodeGen/solutions/CodeGenCoverage</string>
+   <string>/Users/kaylaradu/GitHubRepos/ECE306/Project06/dvt/AnalysisSolutionsTemp/AnalysisSolution1728679917106/null</string>
   </void>
   <void method="add">
-   <string>/Users/kaylaradu/GitHubRepos/ECE306/Project05/dvt/AnalysisSolutionsTemp/AnalysisSolution1728476920339/null</string>
+   <string>/Applications/ti/ccs1280/ccs/ccs_base/dvt_4.1.0.202307061549/CodeGen/solutions/CodeGenCoverage</string>
   </void>
  </void>
 </void>

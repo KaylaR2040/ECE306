@@ -79,10 +79,7 @@ __interrupt void Timer0_B0_ISR(void){
         }
 
     }
-    else {
-        backlight = 1;
-        P6OUT |= LCD_BACKLITE;
-    }
+
     // Add Offset to TBCCR0
     //---------------------------------------------------------------------------
 }

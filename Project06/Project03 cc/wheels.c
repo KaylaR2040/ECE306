@@ -21,14 +21,13 @@
 
 
 
-volatile unsigned int state;   // To manage the state machine
 volatile unsigned char event;  // Event variable from switches.c (e.g., STRAIGHT, CIRCLE)
 extern volatile unsigned int event_Counter; //picking the event based on increment
 
 extern unsigned int Last_Time_Sequence;  // To track changes in Time_Sequence
 extern unsigned int cycle_time;          // Controls shape timings
 extern unsigned int time_change;         // Flag to detect time sequence change
- unsigned int Time_Sequence;
+unsigned int Time_Sequence;
 
 unsigned int delay_start;
 unsigned int left_motor_count;
@@ -48,111 +47,82 @@ extern volatile unsigned int desired_cycles = 0;
 extern char display_line[4][11];
 extern char *display[4];
 extern volatile unsigned char display_changed;
+extern volatile unsigned char update_display;
 extern volatile unsigned int switchpressed;
+extern volatile unsigned int instruction;
 
-void Wheel_Move(void) {
-    if(switchpressed){
-        switch(Time_Sequence){
-        case ONESEC: // 1st second
-                     strcpy(display_line[0], "          ");
-                     strcpy(display_line[1], " FORWARDS ");
-                     strcpy(display_line[2], "ONE SECOND");
-                     strcpy(display_line[3], "          ");
-                     display_changed = TRUE;
-                     ldirection = FORWARD;
-                     rdirection = FORWARD;
-                     Off_Case();
-                     Forward_Move();
-                     break; //
-                 case TWO_SECONDS*ONESEC:
-                     strcpy(display_line[0], "          ");
-                     strcpy(display_line[1], "  WAIT    ");
-                     strcpy(display_line[2], "ONE SECOND");
-                     strcpy(display_line[3], "          ");
-                     display_changed = TRUE;
-                     Off_Case();
-                     break;
-                 case THREE_SECONDS*ONESEC:
-                     strcpy(display_line[0], "          ");
-                     strcpy(display_line[1], "  REVERSE ");
-                     strcpy(display_line[2], "TWOSECONDS");
-                     strcpy(display_line[3], "          ");
-                     display_changed = TRUE;
-                     ldirection = REVERSE;
-                     rdirection = REVERSE;
-                     Off_Case();
-                     Reverse_Move();
-                     break;
-                 case FIVE_SECONDS*ONESEC:
-                     strcpy(display_line[0], "          ");
-                     strcpy(display_line[1], "  WAIT    ");
-                     strcpy(display_line[2], "ONE SECOND");
-                     strcpy(display_line[3], "          ");
-                     display_changed = TRUE;
-                     Off_Case();
-                     break; //
-                 case SIX_SECONDS*ONESEC:
-                     strcpy(display_line[0], "          ");
-                     strcpy(display_line[1], " FORWARDS ");
-                     strcpy(display_line[2], "ONE SECOND");
-                     strcpy(display_line[3], "          ");
-                     display_changed = TRUE;
-                     ldirection = FORWARD;
-                     rdirection = FORWARD;
-                     Off_Case();
-                     Forward_Move();
-                     break;
-                 case SEVEN_SECONDS*ONESEC:
-                     strcpy(display_line[0], "          ");
-                     strcpy(display_line[1], "  WAIT    ");
-                     strcpy(display_line[2], "ONE SECOND");
-                     strcpy(display_line[3], "          ");
-                     display_changed = TRUE;
-                     Off_Case();
-                     break;
-                 case EIGHT_SECONDS*ONESEC:
-                     strcpy(display_line[0], "          ");
-                     strcpy(display_line[1], " CLOCKWISE");
-                     strcpy(display_line[2], " THREESECS");
-                     strcpy(display_line[3], "          ");
-                     display_changed = TRUE;
-                     Off_Case();
-                     rdirection = FORWARD;
-                     ldirection = REVERSE;
-                     Forward_Move();
-                     Reverse_Move();
-                     break;
-                 case TEN_SECONDS*ONESEC:
-                     strcpy(display_line[0], "          ");
-                     strcpy(display_line[1], "  WAIT    ");
-                     strcpy(display_line[2], "TWOSECONDS");
-                     strcpy(display_line[3], "          ");
-                     display_changed = TRUE;
-                     Off_Case();
-                     break;
-                 case TWELVE_SECONDS*ONESEC:
-                     strcpy(display_line[0], "          ");
-                     strcpy(display_line[1], " CCLKWISE ");
-                     strcpy(display_line[2], " THREESECS");
-                     strcpy(display_line[3], "          ");
-                     display_changed = TRUE;
-                     ldirection = FORWARD;
-                     rdirection = REVERSE;
-                     Forward_Move();
-                     Reverse_Move();
-                     break;
-                 case FOURTEEN_SECONDS*ONESEC:
-                     strcpy(display_line[0], "          ");
-                     strcpy(display_line[1], "  WAIT    ");
-                     strcpy(display_line[2], "TWOSECONDS");
-                     strcpy(display_line[3], "          ");
-                     display_changed = TRUE;
-                     Off_Case();
-                     break;
-                 default: break;
-    }
-    }
+extern volatile unsigned int blackleft;
+extern volatile unsigned int blackright;
+extern volatile unsigned int blacklinefound;
+
+extern volatile unsigned int ADC_Left_Detect;
+extern volatile unsigned int ADC_Right_Detect;
+
+unsigned int SpincountL;
+unsigned int SpincountR;
+extern unsigned int FlagSpinL;
+extern unsigned int FlagSpinR;
+
+volatile unsigned char state;
+
+
+
+
+void start_movement(void){
+    Off_Case();
+    LEFT_FORWARD_SPEED = 12000;
+        RIGHT_FORWARD_SPEED = 12000;
+
+        if((ADC_Left_Detect >= BLACK) || (ADC_Right_Detect >= BLACK)){
+            state = SPIN;
+        }
 }
+
+void detected_movement(void){
+
+    if((ADC_Left_Detect >= BLACK) || (ADC_Right_Detect >= BLACK)){
+        state = END;
+    }
+    else if(ADC_Left_Detect >= BLACK){
+        FlagSpinL = TRUE;
+        if(SpincountL >= 5){
+            RIGHT_FORWARD_SPEED = SPEED1;
+            LEFT_REVERSE_SPEED = SPEED1;
+            FlagSpinL = FALSE;
+        }
+    }else{
+        FlagSpinR = TRUE;
+        if(SpincountR >= 5){
+            RIGHT_REVERSE_SPEED = SPEED1;
+            LEFT_FORWARD_SPEED = SPEED1;
+            FlagSpinR = FALSE;
+        }
+    }
+
+}
+
+void spinning_movement(void){
+    FlagSpinL = TRUE;
+    RIGHT_FORWARD_SPEED = SPEED1;
+    LEFT_REVERSE_SPEED = SPEED1;
+    if(SpincountL >= 5){
+        state = DETECTED;
+        SpincountL = 0;
+    }
+
+}
+
+void end_state(void){
+    strcpy(display_line[0], "LINE INTER");
+    update_display = TRUE;
+    display_changed = 1;
+    Off_Case();
+    SpincountL = 0;
+    SpincountR = 0;
+    state = NONE;
+
+}
+
 
 
 
@@ -199,6 +169,7 @@ void Forward_Move(void) {
     if(rdirection == FORWARD){
         RForward_On();
     }
+
 }
 void Reverse_Move(void) {
     if(ldirection == REVERSE){
@@ -208,9 +179,22 @@ void Reverse_Move(void) {
         RReverse_On();
     }
 }
+
+
+
 void Off_Case(void){
-    Forward_Off();
-    Reverse_Off();
+    //    Forward_Off();
+    //    Reverse_Off();
+    RIGHT_FORWARD_SPEED = WHEEL_OFF;   // P6.1 Right Forward PWM duty cycle
+
+
+    LEFT_FORWARD_SPEED = WHEEL_OFF;    // P6.2 Right Forward PWM duty cycl
+
+
+    RIGHT_REVERSE_SPEED = WHEEL_OFF;   // P6.3 Left Forward PWM duty cycle
+
+
+    LEFT_REVERSE_SPEED = WHEEL_OFF;
 }
 
 

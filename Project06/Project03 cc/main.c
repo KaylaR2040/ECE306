@@ -44,6 +44,8 @@ char chosen_direction;
 char change;
 unsigned int wheel_move;
 char forward;
+extern volatile unsigned char state;
+
 
 extern unsigned int Last_Time_Sequence = 0;  // To track changes in Time_Sequence
 extern unsigned int cycle_time = 0;          // Controls shape timings
@@ -51,16 +53,13 @@ extern unsigned int time_change = 0;         // Flag to detect time sequence cha
 extern volatile unsigned int Time_Sequence; // Already existing
 volatile unsigned char event;  // Event variable from switches.c (e.g., STRAIGHT, CIRCLE)
 extern volatile unsigned int event_Counter = 0; //picking the event based on increment
-volatile unsigned int state;   // To manage the state machine
 
 extern volatile unsigned int i;
-extern volatile unsigned int instruction = 0;
+
 
 
 
 void main(void){
-    event = NONE;
-    state = WAIT;
     //    WDTCTL = WDTPW | WDTHOLD;   // stop watchdog timer
 
     //------------------------------------------------------------------------------
@@ -77,15 +76,10 @@ void main(void){
     Init_Conditions();                   // Initialize Variables and Initial Conditions
     Init_Timers();                       // Initialize Timers
     Init_LCD();                          // Initialize LCD
+    Init_ADC();
     // Place the contents of what you want on the display, in between the quotes
-    // Limited to 10 characters per line
-    strcpy(display_line[0], "   NCSU   ");
-    strcpy(display_line[1], " WOLFPACK ");
-    strcpy(display_line[2], "  ECE306  ");
-    strcpy(display_line[3], "  GP I/O  ");
+
     display_changed = TRUE;
-    Display_Update(0,0,0,0);
-    display_changed = FALSE;
 
     wheel_move = 0;
     forward = TRUE;
@@ -95,6 +89,7 @@ void main(void){
 //    Backlight_Process();               // Turn Backlight on/off
 
 
+    P2OUT |= IR_LED;
     //------------------------------------------------------------------------------
     // Beginning of the "While" Operating System
     //------------------------------------------------------------------------------
@@ -102,6 +97,7 @@ void main(void){
 
         //      Carlson_StateMachine();            // Run a Time Based State Machine
         Display_Process();                 // Update Display
+        Backlight_Process();
         P3OUT ^= TEST_PROBE;               // Change State of TEST_PROBE OFF
 
         // Time Sequence Handling
@@ -112,58 +108,42 @@ void main(void){
         }
 
 
-//      Wheel_Move();
         motorDirec();
         Debounce_State();
+        StateMachine();
+
+//        LEFT_FORWARD_SPEED = 12000;
+
+
     }
+
+
 
 
 
     //------------------------------------------------------------------------------
 
 }
-
-void Carlson_StateMachine(void){
-    switch(Time_Sequence){
-    case 250:                        //
-        if(one_time){
-            Init_LEDs();
-            lcd_BIG_mid();
-            display_changed = 1;
-            one_time = 0;
+ void StateMachine(void){
+        switch(state){
+        case WAIT:
+            Off_Case();
+            state = START;
+            break;
+        case START:
+            start_movement();
+            break;
+        case DETECTED:
+            detected_movement();
+            break;
+        case END:
+            end_state();
+            break;
+        case SPIN:
+            spinning_movement();
+            break;
+        default: break;
         }
-        Time_Sequence = 0;             //
-        break;
-    case 200:                        //
-        if(one_time){
-            //          P1OUT &= ~RED_LED;            // Change State of LED 4
-            P6OUT |= GRN_LED;            // Change State of LED 5
-            one_time = 0;
-        }
-        break;
-    case 150:                         //
-        if(one_time){
-            P1OUT |= RED_LED;            // Change State of LED 4
-            P6OUT &= ~GRN_LED;            // Change State of LED 5
-            one_time = 0;
-        }
-        break;
-    case 100:                         //
-        if(one_time){
-            //          lcd_4line();
-            lcd_BIG_bot();
-            P6OUT |= GRN_LED;            // Change State of LED 5
-            display_changed = 1;
-            one_time = 0;
-        }
-        break;
-    case  50:                        //
-        if(one_time){
-            one_time = 0;
-        }
-        break;                         //
-    default: break;
     }
 
 
-}

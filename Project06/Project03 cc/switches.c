@@ -17,6 +17,7 @@
 #include "macros.h"
 #include "switches.h"
 #include <stdio.h>
+#include "timersB0.h"
 
 // Global Variables
 extern volatile unsigned int Time_Sequence; // Already existing
@@ -28,7 +29,8 @@ extern volatile unsigned int debounce_statesw2;
 extern volatile unsigned char display_changed;
 extern char display_line[4][11];
 extern char *display[4];
-
+extern volatile unsigned char state;
+volatile unsigned int pressed = 1;
 
 
 
@@ -72,40 +74,52 @@ void disable_switches(void){
 
 
 
-#pragma vector = PORT4_VECTOR
 
-__interrupt void switchP4_interrupt(void){
+
+
+#pragma vector = PORT4_VECTOR
+__interrupt void switchP1_interrupt(void) {
     // Switch 1
     if (P4IFG & SW1) {
-        P4IFG &= ~SW1;          // IFG SW1 cleared
-        switchpressed = TRUE;
-        Time_Sequence = RESTART;
-        count_debounce_SW1 = RESTART;
-        debounce_statesw1 = ON;
-        disable_switches();
-        strcpy(display_line[0], "          ");
-        strcpy(display_line[1], "          ");
-        strcpy(display_line[2], "          ");
-        strcpy(display_line[3], " SWITCH 1 ");
-        display_changed = TRUE;
+
+
+        P4IE &= ~SW1;                   // Disable Port Interrupt
+        P4IFG &= ~SW1;                  // IFG SW1 cleared
+
+        TB0CCTL1 &= ~CCIFG;             // Clear SW1 debounce interrupt flag
+        TB0CCR1 = TB0CCR1_INTERVAL;     // CCR1 add offset
+        TB0CCTL1 |= CCIE;               // CCR1 enable interrupt
+
+        //SW1 FUNCTIONS:
+
+//        TB0CCTL0 &= ~CCIE; // Disables timersB0
+//        P6OUT &= ~LCD_BACKLITE;
+        switchpressed = ON;
+        state = WAIT;
+
 
     }
+    //-----------------------------------------------------------------------------
 }
+
 #pragma vector = PORT2_VECTOR
 
 __interrupt void switchP2_interrupt(void){
     // Switch 2
     if (P2IFG & SW2) {
         P2IFG &= ~SW2;          // IFG SW2 cleared
-        switchpressed = TRUE;
-        Time_Sequence = RESTART;
-        count_debounce_SW2 = RESTART;
-        debounce_statesw2 = ON;
+        pressed = ~pressed;
+        if(pressed){
+            P2OUT |= IR_LED;
+            strcpy(display_line[0], " IR ON    ");
+        }
+        else{
+            P2OUT &= ~IR_LED;
+            strcpy(display_line[0], " IR OFF   ");
+        }
+
         disable_switches();
-        strcpy(display_line[0], "          ");
-        strcpy(display_line[1], "          ");
-        strcpy(display_line[2], "          ");
-        strcpy(display_line[3], " SWITCH 2 ");
+
         display_changed = TRUE;
 
     }

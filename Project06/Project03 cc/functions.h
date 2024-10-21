@@ -139,4 +139,10 @@ void Reverse_Move(void);
 void Forward_Move(void);
 
 
+//Display
+void Display_Process(void);
+void Backlight_Process(void);
+
+
+
 

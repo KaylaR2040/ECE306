@@ -17,16 +17,13 @@
 
 
 #define NONE ('N')
-#define TRIANGLE ('T')
-#define TRIANGLES ('S')
+#define FORWARD ('F')
+#define REVERSE ('R')
 
-#define ONE_SECOND (1)
-#define TWO_SECONDS (2)
-#define THREE_SECONDS (3)
-#define FIVE_SECONDS (5)
-#define SIX_SECONDS (6)
-#define SEVEN_SECONDS (7)
-#define EIGHT_SECONDS (8)
-#define TEN_SECONDS (10)
-#define TWELVE_SECONDS (12)
-#define FOURTEEN_SECONDS (14)
+
+#define FALSE (0)
+#define BLACK (350)
+
+
+#define FORWARDSPEED (12000)
+#define SPEED1 (12000)
