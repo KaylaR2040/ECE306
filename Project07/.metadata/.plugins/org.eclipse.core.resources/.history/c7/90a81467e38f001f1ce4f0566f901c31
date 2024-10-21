@@ -1,0 +1,163 @@
+/*
+ * interrupts.c
+ *
+ *  Created on: Oct 21, 2024
+ *      Author: kaylaradu
+ */
+
+
+
+// Switches
+//-----------------------------------------------------------------------------
+// Port 4 interrupt for switch 1, it is disabled for the duration
+// of the debounce time. Debounce time is set for 1 second
+#pragma vector=PORT4_VECTOR
+__interrupt void switch1_interrupt(void) {
+    // Switch 1
+    if (P4IFG & SW1) {
+
+        P4IE &= ~SW1;
+        P4IFG &= ~SW1;
+
+        TB0CCTL1 &= ~CCIFG;             // Clear SW1 debounce interrupt flag
+        TB0CCR1 = TB0CCR1_INTERVAL;     // CCR1 add offset
+        TB0CCTL1 |= CCIE;               // CCR1 enable interrupt
+
+        //SW1 FUNCTIONS:
+        state = WAIT;
+        Time_Sequence = 0;
+        //        State_Sequence = 0;
+
+    }
+    //-----------------------------------------------------------------------------
+}
+// Switches
+//-----------------------------------------------------------------------------
+// Port 4 interrupt for switch 1, it is disabled for the duration
+// of the debounce time. Debounce time is set for 1 second
+#pragma vector=PORT4_VECTOR
+__interrupt void switch1_interrupt(void) {
+    // Switch 1
+    if (P4IFG & SW1) {
+
+        P4IE &= ~SW1;                   // Disable Port Interrupt
+        P4IFG &= ~SW1;                  // IFG SW1 cleared
+
+        TB0CCTL1 &= ~CCIFG;             // Clear SW1 debounce interrupt flag
+        TB0CCR1 = TB0CCR1_INTERVAL;     // CCR1 add offset
+        TB0CCTL1 |= CCIE;               // CCR1 enable interrupt
+
+        //SW1 FUNCTIONS:
+        
+        TR0CCTL0 &= ~CCIE; // Disables timersB0
+        switch1_stat = ON;
+        
+
+    }
+    //-----------------------------------------------------------------------------
+}
+//-----------------------------------------------------------------------------
+// Port 2 interrupt for switch 2, it is disabled for the duration
+// of the debounce time. Debounce time is set for 1 second
+#pragma vector=PORT2_VECTOR
+__interrupt void switch2_interrupt(void) {
+    // Switch 2
+    if (P2IFG & SW2) {
+
+        P2IE &= ~SW2;
+        P2IFG &= ~SW2;
+
+        TB0CCTL2 &= ~CCIFG;             // Clear SW2 debounce interrupt flag
+        TB0CCR2 = TB0CCR2_INTERVAL;     // CCR2 add offset
+        TB0CCTL2 |= CCIE;               // CCR2 enable interrupt
+
+        //SW2 FUNCTIONS:
+        //        // Implement Later
+        //        ADC_Update ^= 1; // Toggles the State of ADC_Update, Makes ADC Values Appear/Disappear on LCD
+        //        if(!ADC_Update){
+        //            strcpy(display_line[0], "          ");
+        //            strcpy(display_line[1], "          ");
+        //            strcpy(display_line[2], "          ");
+        //            strcpy(display_line[3], "          ");
+        //            update_display =TRUE;
+        //            backlight_status = OFF;
+        //        }
+
+    }
+    //-----------------------------------------------------------------------------
+}
+
+
+
+// ADC Interrupt
+#pragma vector=ADC_VECTOR
+__interrupt void ADC_ISR(void){
+    //    backlight_status = ON;
+    switch(__even_in_range(ADCIV,ADCIV_ADCIFG)){
+    case ADCIV_NONE:
+        break;
+    case ADCIV_ADCOVIFG:   // When a conversion result is written to the ADCMEM0
+        // before its previous conversion result was read.
+        break;
+    case ADCIV_ADCTOVIFG:   // ADC conversion-time overflow
+        break;
+    case ADCIV_ADCHIIFG:    // Window comparator interrupt flags
+        break;
+    case ADCIV_ADCLOIFG:    // Window comparator interrupt flag
+        break;
+    case ADCIV_ADCINIFG:    // Window comparator interrupt flag
+        break;
+    case ADCIV_ADCIFG:      // ADCMEM0 memory register with the conversion result
+        ADCCTL0 &= ~ADCENC;                          // Disable ENC bit.
+        switch (ADC_Channel++){
+        case 0x00:                                   // Channel A2 Interrupt
+            ADCMCTL0 &= ~ADCINCH_2;                  // Disable Last channel A2
+            ADCMCTL0 |=  ADCINCH_3;                  // Enable Next channel A3
+
+            ADC_Left_Detect = ADCMEM0;               // Move result into Global Values
+            ADC_Left_Detect = ADC_Left_Detect >> 2;  // Divide the result by 4
+            HexToBCD(ADC_Left_Detect);
+            dispPrint(adc_char,2);
+            //            ADC_Update = TRUE;
+
+            break;
+
+        case 0x01:                                   // Channel A3 Interrupt
+            ADCMCTL0 &= ~ADCINCH_3;                  // Disable Last channel A2
+            ADCMCTL0 |=  ADCINCH_5;                  // Enable Next channel A1
+
+            ADC_Right_Detect = ADCMEM0;              // Move result into Global Values
+            ADC_Right_Detect = ADC_Right_Detect >> 2;// Divide the result by 4
+            HexToBCD(ADC_Right_Detect);
+            dispPrint(adc_char,3);
+            //            ADC_Update = TRUE;
+
+            break;
+
+        case 0x02:                                   // Channel A1 Interrupt
+            ADCMCTL0 &= ~ADCINCH_5;                  // Disable Last channel A?
+            ADCMCTL0 |= ADCINCH_2;                   // Enable Next [First] channel 2
+
+            ADC_Thumb = ADCMEM0;                     // Move result into Global Values
+            ADC_Thumb = ADC_Thumb >> 2;              // Divide the result by 4
+            HexToBCD(ADC_Thumb);
+            dispPrint(adc_char,4);
+            //            ADC_Update = TRUE;
+
+            ADC_Channel = 0;
+            break;
+
+        default:
+            break;
+        }
+        ADCCTL0 |= ADCENC;                          // Enable Conversions
+        ADCCTL0 |= ADCSC;
+        break;
+        default:
+            break;
+    }
+}
+
+
+
+
