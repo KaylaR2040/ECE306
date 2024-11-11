@@ -93,13 +93,6 @@ __interrupt void switchP1_interrupt(void) {
         // Disable switches for debounce
         disable_switches();
 
-        // Update Baud Rate to 115200 and Update Display
-        Set_Baud_Rate(115200);  // Update baud rate to 115200
-        LCD_Display("", "", "Baud", "115,200");  // Update LCD to show new baud rate
-
-        // Additional logic: Wait for 2 seconds and transmit data
-        __delay_cycles(2000000);  // Delay for 2 seconds
-        Transmit_Data("NCSU #1");  // Transmit data
 
         // Re-enable switches after debounce
         debounce_statesw1 = 1;

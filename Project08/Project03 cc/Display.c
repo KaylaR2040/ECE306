@@ -91,21 +91,4 @@ display_changed = TRUE;
 }
 //-------------------------------------------------------------
 
-#include "LCD.h"
-
-void Update_LCD_Baud_Rate(unsigned int baud_rate) {
-    char baud_str[10];
-    if (baud_rate == 115200) {
-        strcpy(baud_str, "115,200");
-    } else if (baud_rate == 460800) {
-        strcpy(baud_str, "460,800");
-    }
-
-    LCD_Display("", "", "Baud", baud_str);  // Update baud rate on Line 4
-}
-
-void Update_LCD_Received_Data(char received_char) {
-    char display_str[2] = {received_char, '\0'};
-    LCD_Display("Received:", display_str, "", "");  // Display received character on Line 1
-}
 
