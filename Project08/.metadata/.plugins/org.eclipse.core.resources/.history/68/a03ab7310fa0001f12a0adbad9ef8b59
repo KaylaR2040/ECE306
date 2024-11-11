@@ -28,8 +28,6 @@
 #define TRACK ('T')
 #define END ('E')
 #define RUN ('R')
-#define TRANSMIT ('P')
-#define RECEIVE ('Y')
 
 
 

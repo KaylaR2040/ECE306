@@ -58,7 +58,6 @@ unsigned char hun = ' ';
 char USB_Char_Rx[SMALL_RING_SIZE];
 volatile unsigned int usb_rx_ring_wr = BEGINNING;
 volatile unsigned int usb_rx_ring_rd = BEGINNING;
-unsigned int transmit_count;
 
 void Init_Timers(void) {
     Init_Timer_B0();

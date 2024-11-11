@@ -63,11 +63,6 @@ extern volatile unsigned int usb_rx_ring_wr;
 extern volatile unsigned int usb_rx_ring_rd;
 extern volatile unsigned int switchpressed ;
 
-extern unsigned int baud_toggle;
-extern unsigned int transmit_count;
-extern char transmit_state;
-volatile char Rx_display[SMALL_RING_SIZE];
-
 
 
 

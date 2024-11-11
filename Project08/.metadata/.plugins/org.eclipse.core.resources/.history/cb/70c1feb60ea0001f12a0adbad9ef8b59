@@ -138,7 +138,7 @@ __interrupt void ADC_ISR(void){
             ADC_Left_Detect = ADCMEM0;               // Move result into Global Values
             ADC_Left_Detect = ADC_Left_Detect >> 2;  // Divide the result by 4
             HexToBCD(ADC_Left_Detect);
-//            adc_line(2,2);
+            adc_line(2,2);
 
 
             break;
@@ -150,7 +150,7 @@ __interrupt void ADC_ISR(void){
             ADC_Right_Detect = ADCMEM0;              // Move result into Global Values
             ADC_Right_Detect = ADC_Right_Detect >> 2;// Divide the result by 4
             HexToBCD(ADC_Right_Detect);
-//            adc_line(3,3);
+            adc_line(3,3);
 
 
             break;

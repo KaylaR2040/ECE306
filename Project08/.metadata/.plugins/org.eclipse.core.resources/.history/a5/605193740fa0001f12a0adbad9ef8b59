@@ -31,8 +31,6 @@ extern char display_line[4][11];
 extern char *display[4];
 extern volatile unsigned char state;
 volatile unsigned int pressed = 1;
-unsigned int baud_toggle;
-char transmit_state;
 
 
 

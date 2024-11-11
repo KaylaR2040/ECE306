@@ -63,11 +63,6 @@ extern volatile unsigned int usb_rx_ring_wr;
 extern volatile unsigned int usb_rx_ring_rd;
 extern volatile unsigned int switchpressed ;
 
-extern unsigned int baud_toggle;
-extern unsigned int transmit_count;
-extern char transmit_state;
-volatile char Rx_display[SMALL_RING_SIZE];
-
 
 
 
@@ -121,43 +116,17 @@ void main(void){
             time_change = 1;            // Flag to indicate a time change occurred
         }
 
-        switch(transmit_state){
-              case WAIT:
-                  strcpy(display_line[0], "  WAITING ");
-                  strcpy(display_line[1], "          ");
-                  if (!baud_toggle){
-                      strcpy(display_line[2], "  115200  ");
-                  }
-                  else {
-                      strcpy(display_line[2], "  460800  ");
-                  }
-                  strcpy(display_line[3], "          ");
-                  display_changed = TRUE;
-                  break;
-              case RECEIVE:
-                  strcpy(display_line[0], "  RECEIVE ");
-      //            strcpy(display_line[1], "          ");
-      //            strcpy(display_line[2], "          ");
-                  strcpy(display_line[3], Rx_display);
-                  display_changed = TRUE;
-                  break;
-              case TRANSMIT:
-                  strcpy(display_line[0], " TRANSMIT ");
-                  strcpy(display_line[1], Rx_display);
-      //            strcpy(display_line[2], "          ");
-      //            strcpy(display_line[3], "          ");
-                  display_changed = TRUE;
-                  if (transmit_count >= 25){
-                      transmit_state = WAIT;
-                      transmit_count = 0;
-                      int ride = 0;
-                      while (Rx_display[ride] != 0x00){
-                          Rx_display[ride++] = 0;
-                      }
-                  }
-                  ;
-              default: break;
-          }
+        if (switchpressed == SW1) {
+                   Set_Baud_Rate(115200);  // Set baud rate to 115,200
+                   LCD_Display("", "", "Baud", "115,200");
+                   Transmit_Data("NCSU #1");  // Transmit the array
+               } else if (switchpressed == SW2) {
+                   Set_Baud_Rate(460800);  // Set baud rate to 460,800
+                   LCD_Display("", "", "Baud", "460,800");
+                   Transmit_Data("NCSU #1");  // Transmit the array
+               }
+
+        motorDirec();
         Debounce_State();
 //        StateMachine();
 

@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "*.rmd": "markdown",
-        "*.html": "html",
-        "ports.h": "c",
-        "functions.h": "c",
-        "strings.h": "c"
-    }
-}
