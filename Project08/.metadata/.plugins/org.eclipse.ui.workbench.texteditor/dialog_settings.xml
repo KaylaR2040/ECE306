@@ -6,8 +6,11 @@
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value="Time_Sequence"/>
+		<item key="selection" value=""/>
 		<list key="findhistory">
+			<item value="if (blink_count++ &gt; MS_COUNT)"/>
+			<item value="Init_Timer_B0"/>
+			<item value="enable_int"/>
 			<item value="Time_Sequence"/>
 			<item value="overflow"/>
 			<item value="adc_line"/>
@@ -20,7 +23,6 @@
 			<item value="segment_count"/>
 			<item value="P3"/>
 			<item value="init_Ports"/>
-			<item value="init"/>
 		</list>
 		<list key="replacehistory">
 			<item value="P5"/>
