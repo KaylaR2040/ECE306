@@ -68,7 +68,7 @@ __interrupt void switch1_interrupt(void) {
 
 
         clear_display = 1;
-        // USCI_A0_transmit();
+         USCI_A0_transmit();
 //        while(NCSU_str[t] != '\0'){
 //            UCA0_transmit(NCSU_str[t]);
 //            t++;

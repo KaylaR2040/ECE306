@@ -58,6 +58,10 @@ extern volatile unsigned int Time_Sequence; // Already existing
 volatile unsigned char event;  // Event variable from switches.c (e.g., STRAIGHT, CIRCLE)
 extern volatile unsigned int event_Counter = 0; //picking the event based on increment
 
+
+extern unsigned int okay_to_look_at_switch1;
+extern unsigned int sw1_position;
+
 // SERIAL COMM
 
 extern unsigned int ADC_Left_Detect;
@@ -97,16 +101,37 @@ void main(void){
     Init_Timers();                       // Initialize Timers
     Init_LCD();                          // Initialize LCD
     Init_ADC();
+    Init_Serial_UCA0();
     // Place the contents of what you want on the display, in between the quotes
 
+    strcpy(display_line[0], "          ");
+    strcpy(display_line[1], "          ");
+    strcpy(display_line[2], "          ");
+    strcpy(display_line[3], "          ");
     display_changed = TRUE;
 
+    clear_display = 1;
+    baud_toggle = 0;
+
+    USCI_A0_transmit();
+
+
+    transmit_state = WAIT;
+
+//    motor_off();
     wheel_move = 0;
     forward = TRUE;
 
-//    backlight_changed = TRUE;
-//    backlight = TRUE;
-//    Backlight_Process();               // Turn Backlight on/off
+//    cir_count = 0;
+//    tri_count = 0;
+    state = IDLE;
+    event = IDLE;
+    okay_to_look_at_switch1 = 1;
+    sw1_position = 1;
+
+    //    backlight_changed = TRUE;
+    //    backlight = TRUE;
+    //    Backlight_Process();               // Turn Backlight on/off
 
 
     P2OUT |= IR_LED;
@@ -130,47 +155,54 @@ void main(void){
 
 
         switch(transmit_state){
-               case WAIT:
-                   strcpy(display_line[0], "  WAITING ");
-                   strcpy(display_line[1], "          ");
-                   if (!baud_toggle){
-                       strcpy(display_line[2], "  115200  ");
-                   }
-                   else {
-                       strcpy(display_line[2], "  460800  ");
-                   }
-                   strcpy(display_line[3], "          ");
-                   display_changed = TRUE;
-                   break;
-               case RECEIVE:
-                   strcpy(display_line[0], "  RECEIVE ");
-       //            strcpy(display_line[1], "          ");
-       //            strcpy(display_line[2], "          ");
-                   strcpy(display_line[3], Rx_display);
-                   display_changed = TRUE;
-                   break;
-               case TRANSMIT:
-                   strcpy(display_line[0], " TRANSMIT ");
-                   strcpy(display_line[1], Rx_display);
-       //            strcpy(display_line[2], "          ");
-       //            strcpy(display_line[3], "          ");
-                   display_changed = TRUE;
-                   if (transmit_count >= 25){
-                       transmit_state = WAIT;
-                       transmit_count = 0;
-                       int ride = 0;
-                       while (Rx_display[ride] != 0x00){
-                           Rx_display[ride++] = 0;
-                       }
-                   }
-                   ;
-               default: break;
-           }
-//        motorDirec();
-//        Debounce_State();
-//        StateMachine();
+        case WAIT:
+            strcpy(display_line[0], "  WAITING ");
+            strcpy(display_line[1], "          ");
+            if (!baud_toggle){
+                strcpy(display_line[2], "  115200  ");
+            }
+            else {
+                strcpy(display_line[2], "  460800  ");
+            }
+            strcpy(display_line[3], "          ");
+            display_changed = TRUE;
+            break;
+        case RECEIVE:
+            strcpy(display_line[0], "  RECEIVE ");
+            //            strcpy(display_line[1], "          ");
+            //            strcpy(display_line[2], "          ");
 
-//        LEFT_FORWARD_SPEED = 12000;
+            int i;
+            for(i = 0; i< sizeof(Rx_display); i++){
+                if(!(Rx_display[i] == 0x0D || Rx_display[i] == 0x0A)){
+                    strcpy(display_line[3], Rx_display[i]);
+                }
+            }
+
+            display_changed = TRUE;
+            break;
+        case TRANSMIT:
+            strcpy(display_line[0], " TRANSMIT ");
+            strcpy(display_line[1], Rx_display);
+            //            strcpy(display_line[2], "          ");
+            //            strcpy(display_line[3], "          ");
+            display_changed = TRUE;
+            if (transmit_count >= 15){
+                transmit_state = WAIT;
+                transmit_count = 0;
+                int ride = 0;
+                while (Rx_display[ride] != 0x00){
+                    Rx_display[ride++] = 0;
+                }
+            }
+            ;
+        default: break;
+        }
+        //        motorDirec();
+        Debounce_State();
+        //        StateMachine();
+
+        //        LEFT_FORWARD_SPEED = 12000;
 
 
     }
@@ -182,29 +214,29 @@ void main(void){
     //------------------------------------------------------------------------------
 
 }
- void StateMachine(void){
-        switch(state){
-        case WAIT:
-            Off_Case();
-            state = START;
-            break;
-        case DETECTED:
-            detect_movement();
-            break;
-        case START:
-            start_movement();
-            break;
-        case SPIN:
-            spinning_movement();
-            break;
-        case TRACK:
-            tracking_movement();
-            break;
-        case END:
-            end_state();
-            break;
-        default: break;
-        }
+void StateMachine(void){
+    switch(state){
+    case WAIT:
+        Off_Case();
+        state = START;
+        break;
+    case DETECTED:
+        detect_movement();
+        break;
+    case START:
+        start_movement();
+        break;
+    case SPIN:
+        spinning_movement();
+        break;
+    case TRACK:
+        tracking_movement();
+        break;
+    case END:
+        end_state();
+        break;
+    default: break;
     }
+}
 
 

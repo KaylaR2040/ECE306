@@ -25,7 +25,6 @@ unsigned char one = ' ';
 unsigned char ten = ' ';
 unsigned char hun = ' ';
 
-extern unsigned int Displaycount;
 
 
 
@@ -116,36 +115,36 @@ void Init_Timer_B3(void) {
 
 
 
-void timerdisplay(void){
-    int x = Displaycount;
-    if(x%1000){
-        dec = (x / 1000) + '0';
-        x = x/1000;
-        one = (x / 100)+ '0';
-        x = x/100;
-        ten = (x / 10)+ '0';
-        x = x/10;
-        hun = x + '0';
-    }else if(x %100){
-        dec = (x / 1000) + '0';
-        one = (x / 100)+ '0';
-        x = x/100;
-        ten = (x / 10)+ '0';
-        x = x/10;
-        hun = x + '0';
-    }else if(x %10){
-        dec = (x / 1000) + '0';
-        one = (x / 100)+ '0';
-        ten = (x / 10)+ '0';
-        x = x/10;
-        hun = x + '0';
-    }else {
-        dec = (x / 1000) + '0';
-        one = (x / 100)+ '0';
-        ten = (x / 10)+ '0';
-        hun = x + '0';
-    }
-
-}
+//void timerdisplay(void){
+//    int x = Displaycount;
+//    if(x%1000){
+//        dec = (x / 1000) + '0';
+//        x = x/1000;
+//        one = (x / 100)+ '0';
+//        x = x/100;
+//        ten = (x / 10)+ '0';
+//        x = x/10;
+//        hun = x + '0';
+//    }else if(x %100){
+//        dec = (x / 1000) + '0';
+//        one = (x / 100)+ '0';
+//        x = x/100;
+//        ten = (x / 10)+ '0';
+//        x = x/10;
+//        hun = x + '0';
+//    }else if(x %10){
+//        dec = (x / 1000) + '0';
+//        one = (x / 100)+ '0';
+//        ten = (x / 10)+ '0';
+//        x = x/10;
+//        hun = x + '0';
+//    }else {
+//        dec = (x / 1000) + '0';
+//        one = (x / 100)+ '0';
+//        ten = (x / 10)+ '0';
+//        hun = x + '0';
+//    }
+//
+//}
 
 

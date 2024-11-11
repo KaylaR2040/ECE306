@@ -27,6 +27,20 @@ extern volatile unsigned char backlight_changed;
 extern char adc_char[10];
 extern char display_line[4][11];
 
+volatile char IOT_Ring_Rx[SMALL_RING_SIZE];
+char display_line[4][11];
+
+//void transmit_receive(char line, char loc){
+//    int i;
+//    unsigned int kayon_line;
+//    kayon_line = line - 1;
+//    for(i=0 ; i<9 ; i++) {
+//        display_line[kayon_line][i+loc] = IOT_Ring_Rx[i];
+//    }
+//    display_changed = TRUE;
+//
+//}
+
 void Display_Process(void){
   if(update_display){
     update_display = 0;

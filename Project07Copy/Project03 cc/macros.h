@@ -32,6 +32,10 @@
 #define END ('E')
 #define RUN ('R')
 
+#define PRESSED (0)
+#define RELEASED (1)
+#define NOT_OKAY (0)
+#define OKAY (1)
 
 
 #define P4PUD (P4OUT)
