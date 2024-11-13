@@ -1,0 +1,93 @@
+# FIXED
+
+motors.obj: ../motors.c
+motors.obj: /Applications/ti/ccs1280/ccs/ccs_base/msp430/include/msp430.h
+motors.obj: /Applications/ti/ccs1280/ccs/ccs_base/msp430/include/msp430fr2355.h
+motors.obj: /Applications/ti/ccs1280/ccs/ccs_base/msp430/include/in430.h
+motors.obj: /Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/intrinsics.h
+motors.obj: /Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/intrinsics_legacy_undefs.h
+motors.obj: /Applications/ti/ccs1280/ccs/ccs_base/msp430/include/legacy.h
+motors.obj: ../functions.h
+motors.obj: ../LCD.h
+motors.obj: ../ports.h
+motors.obj: ../macros.h
+motors.obj: ../motors.h
+motors.obj: ../Display.h
+motors.obj: ../timers.h
+motors.obj: ../interrupts.h
+motors.obj: ../switches.h
+motors.obj: ../ADC.h
+motors.obj: ../IR.h
+motors.obj: ../serial.h
+motors.obj: ../DAC.h
+motors.obj: ../menu.h
+motors.obj: /Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/string.h
+motors.obj: /Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/_ti_config.h
+motors.obj: /Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/linkage.h
+motors.obj: /Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/sys/cdefs.h
+motors.obj: /Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/xlocale/_string.h
+motors.obj: /Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/stdio.h
+motors.obj: /Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/stdarg.h
+motors.obj: /Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/sys/_types.h
+motors.obj: /Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/machine/_types.h
+
+../motors.c:
+
+/Applications/ti/ccs1280/ccs/ccs_base/msp430/include/msp430.h:
+
+/Applications/ti/ccs1280/ccs/ccs_base/msp430/include/msp430fr2355.h:
+
+/Applications/ti/ccs1280/ccs/ccs_base/msp430/include/in430.h:
+
+/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/intrinsics.h:
+
+/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/intrinsics_legacy_undefs.h:
+
+/Applications/ti/ccs1280/ccs/ccs_base/msp430/include/legacy.h:
+
+../functions.h:
+
+../LCD.h:
+
+../ports.h:
+
+../macros.h:
+
+../motors.h:
+
+../Display.h:
+
+../timers.h:
+
+../interrupts.h:
+
+../switches.h:
+
+../ADC.h:
+
+../IR.h:
+
+../serial.h:
+
+../DAC.h:
+
+../menu.h:
+
+/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/string.h:
+
+/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/_ti_config.h:
+
+/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/linkage.h:
+
+/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/sys/cdefs.h:
+
+/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/xlocale/_string.h:
+
+/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/stdio.h:
+
+/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/stdarg.h:
+
+/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/sys/_types.h:
+
+/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/machine/_types.h:
+
