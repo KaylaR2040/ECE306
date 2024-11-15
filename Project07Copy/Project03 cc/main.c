@@ -76,6 +76,7 @@ extern unsigned int transmit_count;
 extern char transmit_state;
 extern unsigned int baud_toggle;
 volatile char Rx_display[SMALL_RING_SIZE];
+volatile char values[SMALL_RING_SIZE];
 
 char process_buffer[25];
 //extern char NCSU_str[10] = "NCSU  #1";
@@ -159,10 +160,10 @@ void main(void){
             strcpy(display_line[0], "  WAITING ");
             strcpy(display_line[1], "          ");
             if (!baud_toggle){
-                strcpy(display_line[2], "  115200  ");
+                strcpy(display_line[2], "  460800  ");
             }
             else {
-                strcpy(display_line[2], "  460800  ");
+                strcpy(display_line[2], "  115200  ");
             }
             strcpy(display_line[3], "          ");
             display_changed = TRUE;
@@ -170,9 +171,15 @@ void main(void){
         case RECEIVE:
             strcpy(display_line[0], "  RECEIVE ");
 
-            if(baud_toggle){
-                strcpy(display_line[0], "Carlson   ");
-            }else{
+//            if(baud_toggle){
+//                strncpy((char*)values, "Carlson   ", SMALL_RING_SIZE - 1); // Use strncpy to avoid overflow
+//                values[SMALL_RING_SIZE - 1] = '\0'; // Ensure null termination
+//                unsigned int p = 0;
+//                for(p=0; p<sizeof(Rx_display);p++){
+//                    Rx_display[p]= values[p];
+//                }
+//                strcpy(display_line[3], Rx_display);
+//            }else{
 
                unsigned int k = 0;
                unsigned int i =0;
@@ -187,7 +194,7 @@ void main(void){
 
                    // Copy character to display_line[3] and increment indices
                    display_line[3][k++] = Rx_display[i++];
-               }
+//               }
 
                // Null-terminate the line to ensure it’s a valid string
                display_line[3][k] = '\0';
@@ -199,22 +206,6 @@ void main(void){
             unsigned int y = 0;
             unsigned int z =0;
 
-            if(baud_toggle){
-
-                Rx_display[0] = "Carlson   ";
-                x_display[0]
-               x_display[0]
-            x_display[0]
-     x_display[0]
-                                                        x_display[0]
-                                                                  x_display[0]
-                                                                            x_display[0]
-                                                                                      x_display[0]
-                                                                                                x_display[0]
-
-                                                                                                          strcpy(display_line[3], "Carlson   ");
-
-            }else{
 
                 while (z < sizeof(Rx_display) && y < sizeof(display_line[3]) - 1) {
                 // Check for "CL/" followed by Return (0x0D)
@@ -230,9 +221,10 @@ void main(void){
 
             // Null-terminate the line to ensure it’s a valid string
             display_line[3][y] = '\0';
-            }
+
             display_changed = TRUE;
             if (transmit_count >= 3){
+                strncpy((char*)Rx_display, "          ", SMALL_RING_SIZE - 1);
                 transmit_state = WAIT;
                 transmit_count = 0;
                 int ride = 0;
