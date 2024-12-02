@@ -11,7 +11,6 @@
 #include  "ports.h"
 #include  "macros.h"
 
-extern char adc_char[4];
 extern volatile unsigned char display_changed;
 extern volatile unsigned char update_display;
 volatile char IOT_Ring_Rx[SMALL_RING_SIZE];
@@ -28,6 +27,23 @@ void transmit_receive(char line, char loc){
 
 }
 
+void Display_Process(void){
+  if(update_display){
+    update_display = 0;
+    if(display_changed){
+      display_changed = 0;
+      Display_Update(0,0,0,0);
+    }
+  }
+}
+
+void Clr_Display(void){
+    strcpy(display_line[0], "          ");
+    strcpy(display_line[1], "          ");
+    strcpy(display_line[2], "          ");
+    strcpy(display_line[3], "          ");
+    display_changed = TRUE;
+}
 
 void Init_LEDs(void){
 //------------------------------------------------------------------------------
@@ -38,5 +54,3 @@ void Init_LEDs(void){
   P6OUT &= ~GRN_LED;
 //------------------------------------------------------------------------------
 }
-
-

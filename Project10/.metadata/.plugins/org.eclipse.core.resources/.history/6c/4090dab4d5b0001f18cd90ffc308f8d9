@@ -46,7 +46,6 @@
 #define SEARCH ('Z')
 #define ALIGN ('Y')
 #define BACK ('B')
-#define ARRIVED ('A')
 #define WHEEL_COUNT_TIME (10)
 #define RIGHT_COUNT_TIME (7)
 #define LEFT_COUNT_TIME (8)
@@ -88,7 +87,7 @@
 #define NINETY (37515)
 #define FOURFIVE (28135)
 #define SLOW (20000)
-#define FAST (35000)
+#define FAST (50000)
 
 //
 

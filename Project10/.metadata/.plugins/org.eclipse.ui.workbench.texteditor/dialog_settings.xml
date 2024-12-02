@@ -8,6 +8,7 @@
 		<item key="isRegEx" value="false"/>
 		<item key="selection" value="Time_Sequence"/>
 		<list key="findhistory">
+			<item value="run_time"/>
 			<item value="Time_Sequence"/>
 			<item value="overflow"/>
 			<item value="adc_line"/>

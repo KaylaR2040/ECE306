@@ -11,7 +11,6 @@
 #include  "ports.h"
 #include  "macros.h"
 
-extern char adc_char[4];
 extern volatile unsigned char display_changed;
 extern volatile unsigned char update_display;
 volatile char IOT_Ring_Rx[SMALL_RING_SIZE];
@@ -39,4 +38,23 @@ void Init_LEDs(void){
 //------------------------------------------------------------------------------
 }
 
+//-----------------------------------------------------------------
+//-------------------------------------------------------------
+// ADC Line insert
+// Take the HEX to BCD value in the array adc_char and place it
+// in the desired location on the desired line of the display.
+// char line => Specifies the line 1 thru 4
+// char location => Is the location 0 thru 9
+//
+//-------------------------------------------------------------
+void adc_line(char line, char location){
+//-------------------------------------------------------------
+    int i;
+    unsigned int real_line;
+    real_line = line - 1;
+    for(i=0; i < 4; i++) {
+        display_line[real_line][i+location] = adc_char[i];
+    }
+}
+//-------------------------------------------------------------
 

@@ -598,7 +598,7 @@ void main(void){
                     // make the display cleared
                     strcpy(display_line[0], "          ");
                     display_changed = TRUE;
-                    Display_complete();
+                    Display_completion();
                     if (run_time >= setTime){
                         run_time_flag = 0;
                         motor_off();

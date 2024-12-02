@@ -107,7 +107,6 @@ unsigned int setTime;
 char process_buffer[25];
 unsigned int displayclr = 0;
 unsigned int following = 0;
-char sheet = '0';
 
 
 
@@ -468,20 +467,6 @@ void main(void){
                             }
                             break;
 
-                        case 'A':
-                            if(movement){
-                                break;
-                            }
-                            setTime = 10;
-                            sheet = iot_TX_buf[response_parse+1];
-                            command_op = ARRIVED;
-                            run_time = 0;
-
-                            for (vv = 0; vv < 32; vv++){
-                                iot_TX_buf[vv] = 0;
-                            }
-                            break;
-
                         }
                     }
                 }
@@ -567,6 +552,7 @@ void main(void){
                     strcat(tempStr,"L");
                     dispPrint(tempStr, '4');
                     display_changed = TRUE;
+                    display_changed = TRUE;
                     if (run_time >= setTime){
                         run_time_flag = 0;
                         motor_off();
@@ -594,20 +580,6 @@ void main(void){
 
 
                     break;
-                case ARRIVED:
-                    // make the display cleared
-                    strcpy(display_line[0], "          ");
-                    display_changed = TRUE;
-                    Display_complete();
-                    if (run_time >= setTime){
-                        run_time_flag = 0;
-                        motor_off();
-                        run_time = 0;
-                        command_op = WAIT;
-                        movement = 0;
-                    }
-
-                    break;
                 default: break;
                 }
                 break;
@@ -620,7 +592,7 @@ void main(void){
             //    HexToBCD(ADC_Right_Detect);
             //    adc_line(3,3);
 
-    }
+        }
 
 }
 //------------------------------------------------------------------------------
