@@ -89,20 +89,25 @@ void HexToBCD(int hex_value){
         hex_value = hex_value - 1000;
         value = value + 1;
         adc_char[0] = 0x30 + value;
+
+
     }
     value = 0;
     while (hex_value > 99){
         hex_value = hex_value - 100;
         value = value + 1;
         adc_char[1] = 0x30 + value;
+
     }
     value = 0;
     while (hex_value > 9){
         hex_value = hex_value - 10;
         value = value + 1;
         adc_char[2] = 0x30 + value;
+
     }
     adc_char[3] = 0x30 + hex_value;
+
 }
 
 
@@ -137,8 +142,8 @@ __interrupt void ADC_ISR(void){
 
             ADC_Left_Detect = ADCMEM0;               // Move result into Global Values
             ADC_Left_Detect = ADC_Left_Detect >> 2;  // Divide the result by 4
-            HexToBCD(ADC_Left_Detect);
-            adc_line(2,2);
+//            HexToBCD(ADC_Left_Detect);
+//            adc_line(2,2);
 
 
             break;
@@ -149,9 +154,8 @@ __interrupt void ADC_ISR(void){
 
             ADC_Right_Detect = ADCMEM0;              // Move result into Global Values
             ADC_Right_Detect = ADC_Right_Detect >> 2;// Divide the result by 4
-            HexToBCD(ADC_Right_Detect);
-            adc_line(3,3);
-
+//            HexToBCD(ADC_Right_Detect);
+//            adc_line(3,3);
 
             break;
 
@@ -161,7 +165,7 @@ __interrupt void ADC_ISR(void){
 
             ADC_Thumb = ADCMEM0;                     // Move result into Global Values
             ADC_Thumb = ADC_Thumb >> 2;              // Divide the result by 4
-            HexToBCD(ADC_Thumb);
+//            HexToBCD(ADC_Thumb);
 //            adc_line(4,4);
 
 

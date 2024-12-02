@@ -25573,3 +25573,11 @@ Finished building target: "Project03 cc.out"
  
 
 **** Build Finished ****
+
+**** Build of configuration Debug for project Project03 cc ****
+
+/Applications/ti/ccs1280/ccs/utils/bin/gmake -k -j 9 all -O 
+ 
+gmake[1]: 'Project03 cc.out' is up to date.
+
+**** Build Finished ****

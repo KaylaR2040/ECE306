@@ -48,6 +48,7 @@ char forward;
 extern volatile unsigned char state;
 
 
+
 extern unsigned int Last_Time_Sequence = 0;  // To track changes in Time_Sequence
 extern unsigned int cycle_time = 0;          // Controls shape timings
 extern unsigned int time_change = 0;         // Flag to detect time sequence change
@@ -56,6 +57,8 @@ volatile unsigned char event;  // Event variable from switches.c (e.g., STRAIGHT
 extern volatile unsigned int event_Counter = 0; //picking the event based on increment
 
 extern volatile unsigned int i;
+extern volatile unsigned int ADC_Left_Detect;
+extern volatile unsigned int ADC_Right_Detect;
 
 
 
@@ -113,6 +116,12 @@ void main(void){
         Debounce_State();
         StateMachine();
 
+        HexToBCD(ADC_Left_Detect);
+        adc_line(2,2);
+
+        HexToBCD(ADC_Right_Detect);
+        adc_line(3,3);
+
 //        LEFT_FORWARD_SPEED = 12000;
 
 
@@ -125,20 +134,26 @@ void main(void){
     //------------------------------------------------------------------------------
 
 }
+void ADC_Display(void){
+
+}
  void StateMachine(void){
         switch(state){
         case WAIT:
             Off_Case();
             state = START;
             break;
-        case DETECTED:
-            detect_movement();
-            break;
         case START:
             start_movement();
             break;
+        case DETECTED:
+            detect_movement();
+            break;
         case SPIN:
             spinning_movement();
+            break;
+        case TRACKWAIT:
+            track_wait();
             break;
         case TRACK:
             tracking_movement();

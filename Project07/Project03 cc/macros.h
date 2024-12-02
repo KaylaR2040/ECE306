@@ -26,6 +26,7 @@
 #define DETECTED ('D')
 #define SPIN ('O')
 #define TRACK ('T')
+#define TRACKWAIT ('K')
 #define END ('E')
 #define RUN ('R')
 

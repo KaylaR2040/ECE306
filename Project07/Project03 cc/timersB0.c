@@ -37,10 +37,12 @@ extern volatile unsigned int count_debounce_SW2;
 unsigned int DimFlag = TRUE;
 unsigned int FlagSpinL;
 unsigned int FlagSpinR;
+unsigned int FlagWait;
 unsigned int Blink_counter;
 
 extern unsigned int SpincountL;
 extern unsigned int SpincountR;
+extern unsigned int Waitcount;
 
 unsigned int Displaycount = 0;
 
@@ -181,6 +183,9 @@ __interrupt void Timer0_B0_ISR(void){
     if(FlagSpinR == TRUE){
             SpincountR++;
         }
+    if(FlagWait == TRUE){
+        Waitcount++;
+    }
 
 }
 

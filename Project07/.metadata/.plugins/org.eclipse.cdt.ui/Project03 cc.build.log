@@ -3,96 +3,17 @@
 
 /Applications/ti/ccs1280/ccs/utils/bin/gmake -k -j 9 all -O 
  
-Building file: "../main.c"
-Invoking: MSP430 Compiler
-"/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/bin/cl430" -vmspx --use_hw_mpy=F5 --include_path="/Applications/ti/ccs1280/ccs/ccs_base/msp430/include" --include_path="/Users/kaylaradu/GitHubRepos/ECE306/Project07/Project03 cc" --include_path="/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include" --advice:power=all --advice:hw_config=all --define=__MSP430FR2355__ --define=_FRWP_ENABLE --define=_INFO_FRWP_ENABLE -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 --preproc_with_compile --preproc_dependency="main.d_raw"  "../main.c"
-"../macros.h", line 37: warning #1921-D: white space is required between the macro name "TIMER_B0_1" and its replacement text
-"../macros.h", line 42: warning #48-D: incompatible redefinition of macro "WHEEL_OFF" (declared at line 10 of "../ports.h")
-"../wheels.h", line 20: warning #48-D: incompatible redefinition of macro "FORWARD" (declared at line 17 of "../ports.h")
-"../wheels.h", line 21: warning #48-D: incompatible redefinition of macro "REVERSE" (declared at line 18 of "../ports.h")
-"../wheels.h", line 24: warning #48-D: incompatible redefinition of macro "FALSE" (declared at line 3 of "../ports.h")
-"../wheels.h", line 25: warning #48-D: incompatible redefinition of macro "OFF" (declared at line 16 of "../switches.h")
-"../main.c", line 80: warning #225-D: function "Init_ADC" declared implicitly
-"../main.c", line 112: warning #225-D: function "motorDirec" declared implicitly
-"../main.c", line 113: warning #225-D: function "Debounce_State" declared implicitly
-"../main.c", line 114: warning #225-D: function "StateMachine" declared implicitly
-"../main.c", line 128: warning #161-D: declaration is incompatible with previous "StateMachine" (declared at line 114)
-"../main.c", line 135: warning #225-D: function "detect_movement" declared implicitly
-"../main.c", line 138: warning #225-D: function "start_movement" declared implicitly
-"../main.c", line 141: warning #225-D: function "spinning_movement" declared implicitly
-"../main.c", line 144: warning #225-D: function "tracking_movement" declared implicitly
-"../main.c", line 147: warning #225-D: function "end_state" declared implicitly
-"../main.c", line 46: remark #1535-D: (ULP 8.1) variable "wheel_move" is used as a constant. Recommend declaring variable as either 'static const' or 'const'
-"../main.c", line 47: remark #1535-D: (ULP 8.1) variable "forward" is used as a constant. Recommend declaring variable as either 'static const' or 'const'
-"../macros.h", line 37: warning #1921-D: white space is required between the macro name "TIMER_B0_1" and its replacement text
-"../macros.h", line 42: warning #48-D: incompatible redefinition of macro "WHEEL_OFF" (declared at line 10 of "../ports.h")
-"../wheels.h", line 20: warning #48-D: incompatible redefinition of macro "FORWARD" (declared at line 17 of "../ports.h")
-"../wheels.h", line 21: warning #48-D: incompatible redefinition of macro "REVERSE" (declared at line 18 of "../ports.h")
-"../wheels.h", line 24: warning #48-D: incompatible redefinition of macro "FALSE" (declared at line 3 of "../ports.h")
-"../wheels.h", line 25: warning #48-D: incompatible redefinition of macro "OFF" (declared at line 16 of "/Users/kaylaradu/GitHubRepos/ECE306/Project07/Project03 cc/switches.h")
-"../timersB0.h", line 15: warning #48-D: incompatible redefinition of macro "SLOW" (declared at line 44 of "../macros.h")
-"../switches.h", line 16: warning #48-D: incompatible redefinition of macro "OFF" (declared at line 25 of "../wheels.h")
-"../ADC.c", line 84: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
-"../ADC.c", line 85: remark #2553-D: (ULP 14.1) Array index (involving "i") of type "int". Recommend using "unsigned int"
-"../ADC.c", line 141: warning #225-D: function "adc_line" declared implicitly
-"../ADC.c", line 140: remark #1538-D: (ULP 10.1) ISR ADC_ISR calls function HexToBCD. Recommend moving function call away from ISR, or inlining the function, or using pragmas
-"../ADC.c", line 141: remark #1538-D: (ULP 10.1) ISR ADC_ISR calls function adc_line. Recommend moving function call away from ISR, or inlining the function, or using pragmas
-"../ADC.c", line 152: remark #1538-D: (ULP 10.1) ISR ADC_ISR calls function HexToBCD. Recommend moving function call away from ISR, or inlining the function, or using pragmas
-"../ADC.c", line 153: remark #1538-D: (ULP 10.1) ISR ADC_ISR calls function adc_line. Recommend moving function call away from ISR, or inlining the function, or using pragmas
-"../ADC.c", line 164: remark #1538-D: (ULP 10.1) ISR ADC_ISR calls function HexToBCD. Recommend moving function call away from ISR, or inlining the function, or using pragmas
-"../macros.h", line 37: warning #1921-D: white space is required between the macro name "TIMER_B0_1" and its replacement text
-"../macros.h", line 42: warning #48-D: incompatible redefinition of macro "WHEEL_OFF" (declared at line 10 of "../ports.h")
-"../wheels.h", line 20: warning #48-D: incompatible redefinition of macro "FORWARD" (declared at line 17 of "../ports.h")
-"../wheels.h", line 21: warning #48-D: incompatible redefinition of macro "REVERSE" (declared at line 18 of "../ports.h")
-"../wheels.h", line 24: warning #48-D: incompatible redefinition of macro "FALSE" (declared at line 3 of "../ports.h")
-"../wheels.h", line 25: warning #48-D: incompatible redefinition of macro "OFF" (declared at line 16 of "../switches.h")
-"../macros.h", line 37: warning #1921-D: white space is required between the macro name "TIMER_B0_1" and its replacement text
-"../ports.h", line 3: warning #48-D: incompatible redefinition of macro "FALSE" (declared at line 24 of "../wheels.h")
-"../ports.h", line 10: warning #48-D: incompatible redefinition of macro "WHEEL_OFF" (declared at line 42 of "../macros.h")
-"../ports.h", line 17: warning #48-D: incompatible redefinition of macro "FORWARD" (declared at line 20 of "../wheels.h")
-"../ports.h", line 18: warning #48-D: incompatible redefinition of macro "REVERSE" (declared at line 21 of "../wheels.h")
-"../switches.h", line 16: warning #48-D: incompatible redefinition of macro "OFF" (declared at line 25 of "../wheels.h")
-"../timersB0.h", line 14: warning #48-D: incompatible redefinition of macro "WHEEL_OFF" (declared at line 10 of "../ports.h")
-"../timersB0.h", line 15: warning #48-D: incompatible redefinition of macro "SLOW" (declared at line 44 of "../macros.h")
-"../timersB0.c", line 228: warning #2580-D: pragma vector= accepts numeric arguments or "unused_interrupts" but not TIMER0_B3_VECTOR
-"../timersB0.c", line 236: remark #1530-D: (ULP 5.1) Detected modulo operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 237: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 238: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 239: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 240: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 241: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 242: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 244: remark #1530-D: (ULP 5.1) Detected modulo operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 245: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 246: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 247: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 248: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 249: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 251: remark #1530-D: (ULP 5.1) Detected modulo operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 252: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 253: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 254: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 255: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 258: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 259: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 260: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
-"../timersB0.c", line 37: remark #1535-D: (ULP 8.1) variable "DimFlag" is used as a constant. Recommend declaring variable as either 'static const' or 'const'
-Finished building: "../main.c"
- 
-Building file: "../ADC.c"
-Invoking: MSP430 Compiler
-"/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/bin/cl430" -vmspx --use_hw_mpy=F5 --include_path="/Applications/ti/ccs1280/ccs/ccs_base/msp430/include" --include_path="/Users/kaylaradu/GitHubRepos/ECE306/Project07/Project03 cc" --include_path="/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include" --advice:power=all --advice:hw_config=all --define=__MSP430FR2355__ --define=_FRWP_ENABLE --define=_INFO_FRWP_ENABLE -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 --preproc_with_compile --preproc_dependency="ADC.d_raw"  "../ADC.c"
-Finished building: "../ADC.c"
- 
 Building file: "../wheels.c"
 Invoking: MSP430 Compiler
 "/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/bin/cl430" -vmspx --use_hw_mpy=F5 --include_path="/Applications/ti/ccs1280/ccs/ccs_base/msp430/include" --include_path="/Users/kaylaradu/GitHubRepos/ECE306/Project07/Project03 cc" --include_path="/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include" --advice:power=all --advice:hw_config=all --define=__MSP430FR2355__ --define=_FRWP_ENABLE --define=_INFO_FRWP_ENABLE -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 --preproc_with_compile --preproc_dependency="wheels.d_raw"  "../wheels.c"
+"../macros.h", line 38: warning #1921-D: white space is required between the macro name "TIMER_B0_1" and its replacement text
+"../macros.h", line 43: warning #48-D: incompatible redefinition of macro "WHEEL_OFF" (declared at line 10 of "../ports.h")
+"../wheels.h", line 20: warning #48-D: incompatible redefinition of macro "FORWARD" (declared at line 17 of "../ports.h")
+"../wheels.h", line 21: warning #48-D: incompatible redefinition of macro "REVERSE" (declared at line 18 of "../ports.h")
+"../wheels.h", line 24: warning #48-D: incompatible redefinition of macro "FALSE" (declared at line 3 of "../ports.h")
+"../wheels.h", line 25: warning #48-D: incompatible redefinition of macro "OFF" (declared at line 16 of "../switches.h")
+"../wheels.c", line 61: remark #1535-D: (ULP 8.1) variable "SpincountL" is used as a constant. Recommend declaring variable as either 'static const' or 'const'
 Finished building: "../wheels.c"
- 
-Building file: "../timersB0.c"
-Invoking: MSP430 Compiler
-"/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/bin/cl430" -vmspx --use_hw_mpy=F5 --include_path="/Applications/ti/ccs1280/ccs/ccs_base/msp430/include" --include_path="/Users/kaylaradu/GitHubRepos/ECE306/Project07/Project03 cc" --include_path="/Applications/ti/ccs1280/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include" --advice:power=all --advice:hw_config=all --define=__MSP430FR2355__ --define=_FRWP_ENABLE --define=_INFO_FRWP_ENABLE -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 --preproc_with_compile --preproc_dependency="timersB0.d_raw"  "../timersB0.c"
-Finished building: "../timersB0.c"
  
 Building target: "Project03 cc.out"
 Invoking: MSP430 Linker

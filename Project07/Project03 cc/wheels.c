@@ -60,9 +60,11 @@ extern volatile unsigned int ADC_Right_Detect;
 
 unsigned int SpincountL;
 unsigned int SpincountR;
+unsigned int Waitcount;
 extern unsigned int FlagSpinL;
 extern unsigned int FlagSpinR;
-unsigned int DirectionTurn;
+extern unsigned int FlagWait;
+unsigned int DirectionTurn = 0;
 
 volatile unsigned char state;
 
@@ -81,31 +83,53 @@ void start_movement(void){
     //            state = SPIN;
     //        }
 
-            if((ADC_Left_Detect >= 500 ) || (ADC_Right_Detect >= 500)){
+            if((ADC_Left_Detect >= 500 ) && (ADC_Right_Detect >= 500)){
                 state = DETECTED;
             }
 
 }
 
 void detect_movement(void){
+    FlagWait = TRUE;
     LEFT_FORWARD_SPEED = WHEEL_OFF;
     RIGHT_FORWARD_SPEED = WHEEL_OFF;
     strcpy(display_line[0], "BLACK LINE ");
     display_changed = TRUE;
+    if(Waitcount >=4){
     state = SPIN;
+    FlagWait = FALSE;
+    Waitcount=0;
+    }
 }
 
 void spinning_movement(void){
     // now get it off course like a turn
-    FlagSpinL = TRUE;
     strcpy(display_line[0], "SPINNING ");
     display_changed = TRUE;
-    RIGHT_FORWARD_SPEED = SPINSPEED;
-    LEFT_REVERSE_SPEED = SPINSPEED;
-    if(SpincountL >= 3){
-        state = TRACK;
-        SpincountL = 0;
+    if(ADC_Left_Detect >= BLACKLSP && ADC_Right_Detect >= BLACKRSP){
+        state = TRACKWAIT;
     }
+    else {
+        RIGHT_FORWARD_SPEED = SPINSPEED;
+        LEFT_REVERSE_SPEED = SPINSPEED;
+    }
+
+}
+void track_wait(void){
+    FlagWait = TRUE;
+    strcpy(display_line[0], " TRACKWAIT");
+    display_changed = TRUE;
+    RIGHT_FORWARD_SPEED = WHEEL_OFF;
+    LEFT_REVERSE_SPEED = WHEEL_OFF;
+    RIGHT_REVERSE_SPEED = WHEEL_OFF;
+    LEFT_FORWARD_SPEED = WHEEL_OFF;
+
+    if(Waitcount >=4){
+        state = TRACK;
+        FlagWait = FALSE;
+        Waitcount=0;
+    }
+
 }
 
 void tracking_movement(void){
@@ -117,34 +141,58 @@ void tracking_movement(void){
     LEFT_REVERSE_SPEED = WHEEL_OFF;
 
     // IT IS ON THE LINE
-    if(ADC_Left_Detect >= BLACKDETECT && ADC_Right_Detect >= BLACKDETECT){
+    if(ADC_Left_Detect >= BLACKDETECTL && ADC_Right_Detect >= BLACKDETECTR){
+        strcpy(display_line[0], " STRAIGHT ");
+        display_changed = TRUE;
         RIGHT_FORWARD_SPEED = STRAIGHTMOVE;
         LEFT_FORWARD_SPEED = STRAIGHTMOVE;
         // THE LEFT SENSOR IS MISSING, BUT RIGHT SENSOR IS ON THE LINE
-    }else if(ADC_Left_Detect < BLACKDETECT && ADC_Right_Detect >= BLACKDETECT){
+    }else if(ADC_Left_Detect < BLACKDETECTL && ADC_Right_Detect >= BLACKDETECTR){
+        strcpy(display_line[0], "  RIGHT   ");
+                display_changed = TRUE;
         LEFT_FORWARD_SPEED = TURNSPEED;
         RIGHT_FORWARD_SPEED = WHEEL_OFF;
         DirectionTurn = RIGHT;
         // THE RIGHT SENSOR IS MISSING I NEED TO TURN LEFT TOWARD THE LINE
-    }else if(ADC_Left_Detect >= BLACKDETECT && ADC_Right_Detect < BLACKDETECT){
+    }else if(ADC_Right_Detect < BLACKDETECTR && ADC_Left_Detect >= BLACKDETECTL){
+        strcpy(display_line[0], "   LEFT   ");
+        display_changed = TRUE;
         RIGHT_FORWARD_SPEED = TURNSPEED;
         LEFT_FORWARD_SPEED = WHEEL_OFF;
         DirectionTurn = LEFT;
         // IT IS WAYYY OFF AND CANNOT FIND THE LINE
-    }else if(ADC_Left_Detect < BLACKDETECT && ADC_Right_Detect < BLACKDETECT){
+    }else
+//        if(ADC_Left_Detect < BLACKL && ADC_Right_Detect < BLACKR)
+        {
+        strcpy(display_line[0], "   LOST   ");
+        display_changed = TRUE;
         LEFT_FORWARD_SPEED = WHEEL_OFF;
         RIGHT_FORWARD_SPEED = WHEEL_OFF;
+        LEFT_REVERSE_SPEED = WHEEL_OFF;
+        RIGHT_REVERSE_SPEED = WHEEL_OFF;
 
-        // GO THE OPPOSITE WAY TI DID EARLIER
-        if(DirectionTurn == RIGHT){
-            RIGHT_FORWARD_SPEED = TURNSPEED;
-            LEFT_FORWARD_SPEED = WHEEL_OFF;
-            DirectionTurn = LEFT;
-        }else if(DirectionTurn == LEFT){
-            LEFT_FORWARD_SPEED = TURNSPEED;
-            RIGHT_FORWARD_SPEED = WHEEL_OFF;
-            DirectionTurn = RIGHT;
-        }
+        // GO THE OPPOSITE WAY IT DID EARLIER
+//        if(DirectionTurn == RIGHT){
+//            RIGHT_FORWARD_SPEED = SPEED1;
+//            LEFT_FORWARD_SPEED = WHEEL_OFF;
+//            DirectionTurn = LEFT;
+//        }else if(DirectionTurn == LEFT){
+//            LEFT_FORWARD_SPEED = SPEED1;
+//            RIGHT_FORWARD_SPEED = WHEEL_OFF;
+//            DirectionTurn = RIGHT;
+//        }
+
+        RIGHT_REVERSE_SPEED = SPEED1;
+        LEFT_REVERSE_SPEED = SPEED1;
+
+//        }else {
+//            strcpy(display_line[0], "   FALSE  ");
+//            display_changed = TRUE;
+//            RIGHT_FORWARD_SPEED = SPEED1;
+//            LEFT_FORWARD_SPEED = WHEEL_OFF;
+//
+//
+//        }
     }
 
     FlagSpinR = TRUE;
