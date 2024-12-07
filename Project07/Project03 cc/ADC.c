@@ -32,6 +32,9 @@ extern volatile unsigned int backlight;
 volatile unsigned int blackleft;
 volatile unsigned int blackright;
 volatile unsigned int blacklinefound;
+extern volatile unsigned int pressed;
+int Left;
+int Right;
 
 char adc_char[10];
 
@@ -142,6 +145,10 @@ __interrupt void ADC_ISR(void){
 
             ADC_Left_Detect = ADCMEM0;               // Move result into Global Values
             ADC_Left_Detect = ADC_Left_Detect >> 2;  // Divide the result by 4
+
+            if(pressed == 1 || pressed == 2){
+                Left = ADC_Left_Detect;
+            }
 //            HexToBCD(ADC_Left_Detect);
 //            adc_line(2,2);
 
@@ -154,7 +161,10 @@ __interrupt void ADC_ISR(void){
 
             ADC_Right_Detect = ADCMEM0;              // Move result into Global Values
             ADC_Right_Detect = ADC_Right_Detect >> 2;// Divide the result by 4
-//            HexToBCD(ADC_Right_Detect);
+if(pressed == 1|| pressed == 2){
+    Right = ADC_Right_Detect;
+}
+            //            HexToBCD(ADC_Right_Detect);
 //            adc_line(3,3);
 
             break;

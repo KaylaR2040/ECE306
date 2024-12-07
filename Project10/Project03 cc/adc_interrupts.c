@@ -38,12 +38,7 @@ __interrupt void ADC_ISR(void){
         break;
     case ADCIV_ADCIFG: // ADCMEM0 memory register with the conversion result
 
-        // replace the two lines of code
 
-/*
-        ADC_Thumb = ADCMEM0; // Channel A5
-        ADCCTL0 |= ADCSC; // Start next sample
-*/
 
         ADCCTL0 &= ~ADCENC; // Disable ENC bit.
         switch (ADC_Channel++){

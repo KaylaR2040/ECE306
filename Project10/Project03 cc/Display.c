@@ -10,6 +10,12 @@
 #include  "LCD.h"
 #include  "ports.h"
 #include  "macros.h"
+#include "strings.h"
+#include "wheels.h"
+#include "Timers.h"
+//#include  "DAC.h"
+#include "switches.h"
+
 
 extern char adc_char[4];
 extern volatile unsigned char display_changed;

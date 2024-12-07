@@ -30,8 +30,14 @@ extern volatile unsigned char display_changed;
 extern char display_line[4][11];
 extern char *display[4];
 extern volatile unsigned char state;
-volatile unsigned int pressed = 1;
+volatile unsigned int pressed = 0;
 
+extern volatile unsigned int ADC_Left_Detect;
+extern volatile unsigned int ADC_Right_Detect;
+
+extern int Left;
+extern int Right;
+volatile unsigned int allow = 0;
 
 
 // ENABLE SWITCHES
@@ -95,6 +101,7 @@ __interrupt void switchP1_interrupt(void) {
 //        TB0CCTL0 &= ~CCIE; // Disables timersB0
 //        P6OUT &= ~LCD_BACKLITE;
         switchpressed = ON;
+        allow = 1;
         state = WAIT;
 
 
@@ -108,15 +115,26 @@ __interrupt void switchP2_interrupt(void){
     // Switch 2
     if (P2IFG & SW2) {
         P2IFG &= ~SW2;          // IFG SW2 cleared
-        pressed = ~pressed;
+        pressed = pressed+1;
         if(pressed){
-            P2OUT |= IR_LED;
-            strcpy(display_line[0], " IR ON    ");
+            strcpy(display_line[0], "BLACK CAL ");
+                        HexToBCD(Left);
+                        adc_line(2,2);
+                        HexToBCD(Right);
+                        adc_line(3,3);
+//            strcpy(display_line[1], "SPINNING ");
         }
-        else{
-            P2OUT &= ~IR_LED;
-            strcpy(display_line[0], " IR OFF   ");
+        if(pressed == 2){
+            strcpy(display_line[0], " WHITE DET");
+            HexToBCD(Left+10);
+            adc_line(2,2);
+            HexToBCD(Right+20);
+            adc_line(3,3);
         }
+//        else{
+//            P2OUT &= ~IR_LED;
+//            strcpy(display_line[0], " IR OFF   ");
+//        }
 
         disable_switches();
 

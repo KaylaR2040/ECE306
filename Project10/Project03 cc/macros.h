@@ -22,10 +22,11 @@
 // STATES ======================================================================
 // STATEMACHINE
 
-#define DETECTED ('D')
-#define SPIN ('O')
-#define TRACK ('T')
-#define TRACKWAIT ('K')
+
+
+
+
+
 
 
 #define NONE ('N')
@@ -47,6 +48,7 @@
 #define ALIGN ('Y')
 #define BACK ('B')
 #define ARRIVED ('A')
+#define EXIT ('H')
 #define WHEEL_COUNT_TIME (10)
 #define RIGHT_COUNT_TIME (7)
 #define LEFT_COUNT_TIME (8)
@@ -67,17 +69,17 @@
 #define DEBOUNCE_RESTART (0)
 #define DEBOUNCE_TIME (100)
 
-#define TB0CCR0_INTERVAL (2500)
+#define TB0CCR0_INTERVAL (6250)
 #define TB0CCR1_INTERVAL (50000)
-#define TB0CCR2_INTERVAL (50000)
+#define TB0CCR2_INTERVAL (625)
 
 
 // SERIAL
 #define BEGINNING (0)
 #define SMALL_RING_SIZE (16)
 #define LARGE_RING_SIZE (32)
-#define RECEIVE ('P')
-#define TRANSMIT ('H')
+//#define RECEIVE ('P')
+//#define TRANSMIT ('H')
 #define SSID_SIZE (10)
 
 
@@ -88,7 +90,13 @@
 #define NINETY (37515)
 #define FOURFIVE (28135)
 #define SLOW (20000)
+#define FASTRIGHT (21500)
+#define FASTLEFT (20000)
+#define FASTRIGHTB (35000)
+#define FASTLEFTB (35400)
 #define FAST (35000)
+#define PERCENT_100 (50000)
+#define PERCENT_80 (45000)
 
 //
 

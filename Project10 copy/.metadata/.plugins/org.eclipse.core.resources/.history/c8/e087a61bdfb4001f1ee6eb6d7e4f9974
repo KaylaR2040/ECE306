@@ -1,0 +1,194 @@
+//===========================================================================
+// File Name : main.c
+//
+// Description: This file contains the main routine for the operating system,
+//              initializing components, processing displays, and handling 
+//              state machine logic for wheel movements and IoT communication.
+//
+// Author: Kayla Radu
+// Date: November 21, 2024
+// Compiler: Built with Code Composer Studio Version: 12.8.0.00012
+//===========================================================================
+
+//------------------------------------------------------------------------------
+// Includes
+//------------------------------------------------------------------------------
+#include "msp430.h"
+#include "functions.h"
+#include "LCD.h"
+#include "ports.h"
+#include "macros.h"
+#include "strings.h"
+#include "wheels.h"
+#include "Timers.h"
+#include "DAC.h"
+#include "switches.h"
+
+//------------------------------------------------------------------------------
+// Global Variables
+//------------------------------------------------------------------------------
+
+// Display-related variables
+extern char display_line[4][11];
+extern char *display[4];
+volatile unsigned char display_changed = FALSE;
+extern volatile unsigned char update_display;
+unsigned char display_mode = 0;
+
+// Timer-related variables
+extern volatile unsigned int Time_Sequence;
+unsigned int wheel_move = 0;
+unsigned int cycle_time = 0;
+unsigned int Last_Time_Sequence = 0;
+
+// Switch-related variables
+extern unsigned int okay_to_look_at_switch1;
+extern unsigned int sw1_position;
+
+// Movement control variables
+unsigned int movement = 0;
+unsigned int movementcount = 0;  // Added missing definition
+unsigned int state = 0;          // Added missing definition
+unsigned int increment = 0;      // Added missing definition
+
+// IoT communication variables
+volatile char iot_TX_buf[LARGE_RING_SIZE];
+volatile char IOT_Ring_Rx[LARGE_RING_SIZE];
+volatile unsigned int tx_index = 0;
+volatile unsigned int IOT_on_timer = 0;
+unsigned int response_value = 0;
+unsigned int command4_flag = 0;
+char commanding_send = WAIT;
+extern char transmit_state;
+
+// ADC-related variables
+extern unsigned int ADC_Detection_L;
+extern unsigned int ADC_Detection_R;
+
+// Miscellaneous
+unsigned int running_timecount = 0;
+unsigned int running_timecount_flag = 0;
+unsigned int setTime = 0;
+unsigned int displayclr = 0;
+unsigned int init_completed = 0;
+volatile char Rx_display[SMALL_RING_SIZE];
+char sheet = '0';
+unsigned char forward = TRUE;   // Added missing definition
+
+//------------------------------------------------------------------------------
+// Function Prototypes
+//------------------------------------------------------------------------------
+void main(void);
+void Init_Conditions(void);
+void Display_Process(void);
+void centeringdisplay(char *line, char linechange);
+void blacklinemachine(void);
+void exit_state(void);
+void Init_IoT_Process(void);
+void Run_Command_Process(void);
+void Execute_Command(void);
+
+//==============================================================================
+// Function: main
+//
+// Description: The main routine for the program. Initializes hardware, manages
+//              the operating system loop, and processes state machine logic.
+//==============================================================================
+void main(void) {
+    // Disable GPIO high-impedance mode to activate previously configured port settings
+    PM5CTL0 &= ~LOCKLPM5;
+
+    // Initialization functions
+    Init_Ports();
+    Init_Clocks();
+    Init_Conditions();
+    Init_Timers();
+    Init_LCD();
+    Init_ADC();
+    Init_Serial_UCA0();
+    Init_Serial_UCA1();
+    Init_DAC();
+
+    // Initialize display
+    strcpy(display_line[0], "          ");
+    strcpy(display_line[1], "          ");
+    strcpy(display_line[2], "          ");
+    strcpy(display_line[3], "          ");
+    display_changed = TRUE;
+
+    USCI_A0_transmit();
+
+    transmit_state = WAIT;
+    Wheels_off();
+    forward = TRUE;
+
+    // Initialize IoT variables
+    IOT_on_timer = 0;
+    init_completed = 0;
+    commanding_send = WAIT;
+    state = WAIT;
+
+    P2OUT |= IR_LED;
+
+    // Main operating system loop
+    while (ALWAYS) {
+        Display_Process();   // Update display
+        motor_failure();     // Check for motor failure
+
+        P3OUT ^= TEST_PROBE; // Toggle test probe
+
+        if (displayclr == 1) {
+            Clr_Display();
+        }
+
+        switch (init_completed) {
+            case 0:
+                Init_IoT_Process();
+                break;
+            case 1:
+                Run_Command_Process();
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+//==============================================================================
+// Function: centeringdisplay
+//
+// Description: Aligns text to the middle of the display for a specified line.
+//==============================================================================
+void centeringdisplay(char *line, char linechange) {
+    int lineloc = -1;
+
+    // Determine which line to update
+    if (linechange == '1') lineloc = 0;
+    else if (linechange == '2') lineloc = 1;
+    else if (linechange == '3') lineloc = 2;
+    else if (linechange == '4') lineloc = 3;
+    else {
+        strcpy(display_line[0], "   WRONG  ");
+        display_changed = TRUE;
+        return;
+    }
+
+    if (line != NULL) {
+        int len = strlen(line);
+        if (len > 10) len = 10;
+
+        int spaces = (10 - len) / 2;
+
+        for (int i = 0; i < 10; i++) {
+            display_line[lineloc][i] = ' ';
+        }
+        for (int i = 0; i < len; i++) {
+            display_line[lineloc][spaces + i] = line[i];
+        }
+        display_line[lineloc][10] = '\0';
+        display_changed = TRUE;
+    } else {
+        strcpy(display_line[lineloc], " NULL Line ");
+        display_changed = TRUE;
+    }
+}

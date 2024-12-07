@@ -35,9 +35,11 @@
 
 
 #define FORWARDSPEED (12000)
-#define SPINSPEED (10000)
+#define SPINSPEED (11000)
+#define SPINSPEEDR (11000)
 #define TURNSPEED (10000)
 #define SPEED1 (10000)
 #define STRAIGHTMOVE (10000)
 
-#define FIFTYSEC (1000)
+#define FIFTYSEC (20)
+#define USEVAL (80)

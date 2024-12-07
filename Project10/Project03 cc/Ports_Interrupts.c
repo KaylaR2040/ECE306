@@ -24,8 +24,7 @@ extern char display_line[4][11];
 volatile unsigned char update_display;
 volatile char one_time;
 volatile unsigned int Time_Sequence;
-unsigned int tmr_ms_count;
-unsigned int blink_count;
+
 unsigned int event;
 unsigned int state;
 unsigned int t=0;
@@ -54,9 +53,9 @@ __interrupt void switch1_interrupt(void) {
 //        P2OUT &= ~IR_LED; // Initial Value = Low / Off
 //        P2DIR |= IR_LED; // Direction = input
 
-        transmit_state = TRANSMIT;
-        switchpressed = ON;
-                state = WAIT;
+//        transmit_state = TRANSMIT;
+//        switchpressed = ON;
+//                state = WAIT;
 
 
         clear_display = 1;

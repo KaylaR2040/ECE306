@@ -8,6 +8,7 @@
 		<item key="isRegEx" value="false"/>
 		<item key="selection" value="Time_Sequence"/>
 		<list key="findhistory">
+			<item value="12000"/>
 			<item value="run_time"/>
 			<item value="Time_Sequence"/>
 			<item value="overflow"/>
@@ -28,7 +29,7 @@
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item key="DIALOG_X_ORIGIN" value="1044"/>
+		<item key="DIALOG_X_ORIGIN" value="1043"/>
 		<item key="DIALOG_Y_ORIGIN" value="561"/>
 		<item key="DIALOG_WIDTH" value="336"/>
 		<item key="DIALOG_HEIGHT" value="402"/>

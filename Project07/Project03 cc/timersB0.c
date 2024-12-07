@@ -55,6 +55,7 @@ unsigned char dec = ' ';
 unsigned char one = ' ';
 unsigned char ten = ' ';
 unsigned char hun = ' ';
+unsigned int leaveFlag = 1;
 
 
 
@@ -150,11 +151,14 @@ void Init_Timer_B3(void) {
 #pragma vector = TIMER0_B0_VECTOR
 __interrupt void Timer0_B0_ISR(void){
 
-    Displaycount += 2;
+    if(leaveFlag){
+        Displaycount += 2.5;
+    }
     if(Displaycount >= 9998){
         Displaycount = 0;
+
     }
-//    timerdisplay();
+    timerdisplay();
 //    strncpy(display_line[4], "          ", 10);
 //
 //
@@ -166,6 +170,9 @@ __interrupt void Timer0_B0_ISR(void){
     //    backlight_changed = TRUE;
     //    backlight = ~backlight;
 //    P6OUT |= LCD_BACKLITE;
+
+
+
 
 
     if(DimFlag == TRUE){
@@ -235,37 +242,16 @@ __interrupt void Timer0_B3_ISR(void){
     TB0CCR2 += TB0CCR2_INTERVAL;
 }
 
-
-void timerdisplay(void){
+void timerdisplay(void) {
     int x = Displaycount;
-    if(x%1000){
-        dec = (x / 1000) + '0';
-        x = x/1000;
-        one = (x / 100)+ '0';
-        x = x/100;
-        ten = (x / 10)+ '0';
-        x = x/10;
-        hun = x + '0';
-    }else if(x %100){
-        dec = (x / 1000) + '0';
-        one = (x / 100)+ '0';
-        x = x/100;
-        ten = (x / 10)+ '0';
-        x = x/10;
-        hun = x + '0';
-    }else if(x %10){
-        dec = (x / 1000) + '0';
-        one = (x / 100)+ '0';
-        ten = (x / 10)+ '0';
-        x = x/10;
-        hun = x + '0';
-    }else {
-        dec = (x / 1000) + '0';
-        one = (x / 100)+ '0';
-        ten = (x / 10)+ '0';
-        hun = x + '0';
-    }
 
+    // Convert the value to milliseconds (since each increment is 2 ms)
+    int time_in_ms = x * 2;
+
+    // Separate into thousands, hundreds, tens, and ones
+    dec = (time_in_ms / 1000) % 10 + '0'; // Thousands place (converted to ASCII)
+    hun = (time_in_ms / 100) % 10 + '0';  // Hundreds place (converted to ASCII)
+    ten = (time_in_ms / 10) % 10 + '0';   // Tens place (converted to ASCII)
+    one = (time_in_ms % 10) + '0';        // Ones place (converted to ASCII)
+Displaytime();
 }
-
-

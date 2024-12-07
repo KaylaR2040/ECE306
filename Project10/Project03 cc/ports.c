@@ -1,4 +1,3 @@
-
 //===========================================================================
 // File Name : ports.c
 //
@@ -10,12 +9,16 @@
 //===========================================================================
 
 #include  "msp430.h"
-#include  <string.h>
 #include  "functions.h"
 #include  "LCD.h"
 #include  "ports.h"
-#include "macros.h"
+#include  "macros.h"
+#include "strings.h"
 #include "wheels.h"
+#include "Timers.h"
+//#include  "DAC.h"
+#include "switches.h"
+
 
 //Init_Ports
 void Init_Ports(){
@@ -79,10 +82,10 @@ void Init_Port1(void){
     P1OUT |= RED_LED; // Set Red LED On
     P1DIR |= RED_LED; // Set Red LED direction to output
 
-    P1SELC |= V_A1_SEEED; // ADC input for A1_SEEED
+    P1SELC |= A1_SEEED; // ADC input for A1_SEEED
     P1SELC |= V_DETECT_L; // ADC input for V_DETECT_L
     P1SELC |= V_DETECT_R; // ADC input for V_DETECT_R
-    P1SELC |= V_A4_SEEED; // ADC input for V_A4_SEEED
+    P1SELC |= A4_SEEED; // ADC input for V_A4_SEEED
     P1SELC |= V_THUMB; // ADC input for V_THUMB
 
     P1SEL0 |= UCA0TXD; // UCA0TXD pin
@@ -119,10 +122,10 @@ void Init_Port2(void){  // Configure Port 2
     P2IFG  &= ~SW2; // IFG SW1 cleared
     P2IE   |=  SW2; // SW1 interrupt Enabled
 
-    P2SEL0 &= ~IOT_RUN_RED;
-    P2SEL1 &= ~IOT_RUN_RED; // IOT_RUN_CPU GPIO operation
-    P2OUT  &= ~IOT_RUN_RED; // Initial Value = Low / Off
-    P2DIR  |=  IOT_RUN_RED; // Direction = input
+    P2SEL0 &= ~IOT_RUN_CPU;
+    P2SEL1 &= ~IOT_RUN_CPU; // IOT_RUN_CPU GPIO operation
+    P2OUT  &= ~IOT_RUN_CPU; // Initial Value = Low / Off
+    P2DIR  |=  IOT_RUN_CPU; // Direction = input
 
     P2SEL0 &= ~DAC_ENB; // DAC_ENB GPIO operation
     P2SEL1 &= ~DAC_ENB; // DAC_ENB GPIO operation
@@ -142,36 +145,36 @@ void Init_Port3(){ //Configure Port 3
     P3OUT  &= ~TEST_PROBE;
     P3DIR  |= TEST_PROBE;
 
-    P3SEL0 &= ~OA2O;
-    P3SEL1 &= ~OA2O;
-    P3OUT  &= ~OA2O;
-    P3DIR  |=  OA2O;
+    P3SEL0 &= ~OA20;
+    P3SEL1 &= ~OA20;
+    P3OUT  &= ~OA20;
+    P3DIR  |=  OA20;
 
     P3SEL0 &= ~OA2N;
     P3SEL1 &= ~OA2N;
     P3OUT  &= ~OA2N;
     P3DIR  |=  OA2N;
 
+    P3SEL0 &= ~OA2P;
+    P3SEL1 &= ~OA2P;
+    P3OUT  &= ~OA2P;
+    P3DIR  |=  OA2P;
 
     P3SEL0 &= ~SMCLK_OUT;
     P3SEL1 &= ~SMCLK_OUT;
     P3OUT  &= ~SMCLK_OUT;
-    P3DIR  &= ~SMCLK_OUT;
+    P3DIR  |= ~SMCLK_OUT;
 
-    P3SEL0 &= ~DAC_CNTL;
-    P3SEL1 &= ~DAC_CNTL;
-    P3OUT  &= ~DAC_CNTL;
-    P3DIR  |=  DAC_CNTL;
+    P3SEL0 &= ~DAC_CTRL;
+    P3SEL1 &= ~DAC_CTRL;
+    P3SELC |= DAC_CTRL;
+    SAC3DAC |= DACEN;
 
-    P3SEL0 &= ~IOT_LINK_GRN;
-    P3SEL1 &= ~IOT_LINK_GRN;
-    P3OUT  &= ~IOT_LINK_GRN;
-    P3DIR  |=  IOT_LINK_GRN;
+    P3SEL0 &= ~IOT_LINK_CPU;
+    P3SEL1 &= ~IOT_RN_CPU;
+    P3OUT &= ~IOT_RN_CPU;
+    P3DIR |= IOT_RN_CPU;
 
-    P3SEL0 &= ~IOT_EN;
-    P3SEL1 &= ~IOT_EN;
-    P3OUT  &= ~IOT_EN;
-    P3DIR  |=  IOT_EN;
 }
 
 void Init_Port4(void){ // Configure PORT 4
@@ -188,18 +191,19 @@ void Init_Port4(void){ // Configure PORT 4
     P4DIR  &= ~SW1; // Direction = input
     P4REN  |=  SW1; // Enable pullup resistor
     P4OUT  |=  SW1; // Configure pull-up resistor SW1
-    P4IES  |=  SW1; // SW1 Hi/Lo edge interrupt
-    P4IFG  &= ~SW1; // IFG SW1 cleared
-    P4IE   |=  SW1; // SW1 interrupt Enabled
+//    P4IES  |=  SW1; // SW1 Hi/Lo edge interrupt
+//    P4IFG  &= ~SW1; // IFG SW1 cleared
+//    P4IE   |=  SW1; // SW1 interrupt Enabled
+
 
     P4SEL0 |= UCA1RXD; // USCI_A1 UART operation
     P4SEL1 &= ~UCA1RXD; // USCI_A1 UART operation
+
     P4SEL0 |= UCA1TXD; // USCI_A1 UART operation
     P4SEL1 &= ~UCA1TXD; // USCI_A1 UART operation
 
     P4SEL0 &= ~UCB1_CS_LCD; // UCB1_CS_LCD GPIO operation
     P4SEL1 &= ~UCB1_CS_LCD; // UCB1_CS_LCD GPIO operation
-
     P4OUT |= UCB1_CS_LCD; // Set SPI_CS_LCD Off [High]
     P4DIR |= UCB1_CS_LCD; // Set SPI_CS_LCD direction to output
 
@@ -222,14 +226,37 @@ void Init_Port5(void){
     P5OUT = 0x00;
     P5DIR = 0x00;
 
-    P5SELC |= V_BAT; // ADC input for V_BAT
-    P5SELC |= V_5_0; // ADC input for V_BAT
-    P5SELC |= V_DAC; // ADC input for V_DAC
-    P5SELC |= V_3_3; // ADC input for V_3_3
-    P5SEL0 &= ~IOT_BOOT; // IOT_BOOT GPIO operation
-    P5SEL1 &= ~IOT_BOOT; // IOT_BOOT GPIO operation
-    P5OUT |= IOT_BOOT; // Set Output value inactive
-    P5DIR |= IOT_BOOT; // Set direction to output
+    P5SEL0 &= ~V_BAT;
+    P5SEL1 &= ~V_BAT;
+    P5OUT &= ~V_BAT;
+    P5DIR |= V_BAT;
+    P5SELC |= V_BAT;
+
+    P5SEL0 &= ~V_5;
+    P5SEL1 &= ~V_5;
+    P5OUT &= ~V_5;
+    P5DIR |= V_5;
+    P5SELC |= V_5;
+
+
+    P5SEL0 &= ~CV_DAC;
+    P5SEL1 &= ~CV_DAC;
+    P5OUT &= ~CV_DAC;
+    P5DIR |= CV_DAC;
+    P5SELC |= CV_DAC;
+
+    P5SEL0 &= ~V3_3;
+    P5SEL1 &= ~V3_3;
+    P5OUT &= ~V3_3;
+    P5DIR |= V3_3;
+    P5SELC |= V3_3;
+
+    P5SEL0 &= ~IOT_BOOT_CPU;
+    P5SEL1 &= ~IOT_BOOT_CPU;
+    P5OUT &= ~IOT_BOOT_CPU;
+    P5DIR |= IOT_BOOT_CPU;
+    P5SELC |= IOT_BOOT_CPU;
+
 
 }
 

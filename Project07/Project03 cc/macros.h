@@ -29,6 +29,10 @@
 #define TRACKWAIT ('K')
 #define END ('E')
 #define RUN ('R')
+#define TURNSTOP ('2')
+#define TURNN ('5')
+#define STRAIGHTL ('!')
+#define STRAIGHTSTOP ('8')
 
 
 

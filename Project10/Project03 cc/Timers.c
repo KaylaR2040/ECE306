@@ -12,7 +12,12 @@
 #include  "LCD.h"
 #include  "ports.h"
 #include  "macros.h"
-#include  "strings.h"
+#include "strings.h"
+#include "wheels.h"
+#include "Timers.h"
+//#include  "DAC.h"
+#include "switches.h"
+
 //------------------------------------------------------------------------------
 //variable declarations
 unsigned int display_count;
@@ -22,7 +27,7 @@ volatile unsigned char update_display;
 volatile char one_time;
 volatile unsigned int Time_Sequence;
 unsigned int tmr_ms_count;
-unsigned int blink_count;
+
 //------------------------------------------------------------------------------
 void Init_Timers(void){
   Init_Timer_B0();
@@ -34,7 +39,7 @@ void Init_Timer_B0(void) {
     TB0CTL = TBSSEL__SMCLK; // SMCLK source
     TB0CTL |= TBCLR; // Resets TB0R, clock divider, count direction
     TB0CTL |= MC__CONTINOUS; // Continuous up
-    TB0CTL |= ID__8; // Divide clock by 4
+    TB0CTL |= ID__8; // Divide clock by 8
     TB0EX0 = TBIDEX__8; // Divide clock by an additional 8
     TB0CCR0 = TB0CCR0_INTERVAL; // CCR0
     TB0CCTL0 |= CCIE; // CCR0 enable interrupt

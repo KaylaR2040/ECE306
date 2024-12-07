@@ -60,7 +60,12 @@ extern volatile unsigned int i;
 extern volatile unsigned int ADC_Left_Detect;
 extern volatile unsigned int ADC_Right_Detect;
 
-
+extern unsigned char dec;
+extern unsigned char one;
+extern unsigned char ten;
+extern unsigned char hun ;
+extern volatile unsigned int pressed;
+extern volatile unsigned int allow;
 
 
 void main(void){
@@ -116,11 +121,13 @@ void main(void){
         Debounce_State();
         StateMachine();
 
+        if(allow){
         HexToBCD(ADC_Left_Detect);
         adc_line(2,2);
 
         HexToBCD(ADC_Right_Detect);
         adc_line(3,3);
+        }
 
 //        LEFT_FORWARD_SPEED = 12000;
 
@@ -158,11 +165,44 @@ void ADC_Display(void){
         case TRACK:
             tracking_movement();
             break;
+        case TURNSTOP:
+            turn_stop();
+            break;
+        case TURNN:
+            turning();
+            break;
+        case STRAIGHTSTOP:
+            straightstop();
+            break;
+        case STRAIGHTL:
+            straightline();
+            break;
         case END:
             end_state();
             break;
         default: break;
         }
     }
+
+
+ void Displaytime(void){
+     char temp[11]; // Temporary buffer to format the string
+        // Format the string manually
+        temp[0] = ' ';
+        temp[1] = ' ';
+        temp[2] = ' ';
+        temp[3] = dec;
+        temp[4] = hun;
+        temp[5] = ten;
+        temp[6] = '.';
+        temp[7] = one;
+        temp[8] = ' ';
+        temp[9] = ' ';
+        temp[10] = '\0'; // Null terminator
+
+        // Copy the formatted string into the display line
+        strcpy(display_line[3], temp);
+        display_changed = TRUE;
+ }
 
 

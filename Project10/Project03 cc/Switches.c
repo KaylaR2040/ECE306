@@ -11,6 +11,11 @@
 #include  "ports.h"
 #include  "macros.h"
 #include "strings.h"
+#include "wheels.h"
+#include "Timers.h"
+//#include  "DAC.h"
+#include "switches.h"
+
 
 //Variable declarations==========================================================
 unsigned int okay_to_look_at_switch1;

@@ -15,6 +15,9 @@
 #include  "macros.h"
 #include "strings.h"
 #include "wheels.h"
+#include "Timers.h"
+#include  "DAC.h"
+#include "switches.h"
 
 
 // Function Prototypes
@@ -54,8 +57,6 @@ unsigned int wheel_move;
 unsigned int Last_Time_Sequence;
 unsigned int cycle_time;
 unsigned int time_change;
-extern unsigned int cir_count;
-extern unsigned int tri_count;
 extern unsigned int okay_to_look_at_switch1;
 extern unsigned int sw1_position;
 char forward;
@@ -65,6 +66,7 @@ volatile char Rx_display[SMALL_RING_SIZE];
 
 extern unsigned int event;
 extern unsigned int state;
+extern unsigned int Circlecount;
 
 
 
@@ -75,18 +77,19 @@ volatile char conf_server[] = "AT+CIPSERVER=1,8080\r\n";
 volatile char SSID_access[] = "AT+CWJAP?\r\n";
 volatile char IP_access[] = "AT+CIFSR\r\n";
 volatile char check_okay[] = "AT\r\n";
+volatile char pinging1[] = "AT+PING=\"www.google.com\"\r\n";
+volatile char pinging2[] = "AT+PING=\"www.ncsu.edu\"\r\n";
 volatile char IOT_Ring_Rx[LARGE_RING_SIZE];
 volatile char iot_TX_buf[LARGE_RING_SIZE];
 volatile char ssid_display[SSID_SIZE];
-volatile unsigned int legacy;
+volatile unsigned int tx_index;
 unsigned int command4_flag;
 volatile char ip_display1[SSID_SIZE];
 volatile char ip_display2[SSID_SIZE];
 extern unsigned int initialize_done;
 extern unsigned int run_time;
-volatile char command_op;
+volatile char commanding_send;
 extern unsigned int run_time_flag;
-//extern unsigned int ip_index;
 
 extern unsigned int ADC_Left_Detect;
 extern unsigned int ADC_Right_Detect;
@@ -95,7 +98,6 @@ unsigned int on_line;
 extern unsigned int transmit_done;
 unsigned int clear_display;
 
-extern unsigned int transmit_count;
 extern unsigned int iot_on_time;
 unsigned int iot_start_count;
 
@@ -108,6 +110,7 @@ char process_buffer[25];
 unsigned int displayclr = 0;
 unsigned int following = 0;
 char sheet = '0';
+extern unsigned int movementcount;
 
 
 
@@ -136,6 +139,7 @@ void main(void){
     Init_ADC();
     Init_Serial_UCA0();
     Init_Serial_UCA1();
+    Init_DAC();
     //  enable_interrupts();
 
 
@@ -171,7 +175,7 @@ void main(void){
     iot_on_time = 0;
     unsigned int initial_process = 0;
     initialize_done = 0;
-    command_op = WAIT;
+    commanding_send = WAIT;
     state = WAIT;
 
     P2OUT |= IR_LED;
@@ -185,6 +189,7 @@ void main(void){
         Display_Process();                 // Update Display
         //motor_check();
         P3OUT ^= TEST_PROBE;               // Change State of TEST_PROBE OFF
+
 
 
             if(displayclr == 1){
@@ -202,7 +207,7 @@ void main(void){
                         display_changed = TRUE;
                     }
                     else{
-                        P3OUT |= IOT_EN;
+                        P3OUT |= IOT_RN_CPU;
                         strcpy(display_line[0], "   IOT    ");
                         strcpy(display_line[1], "   ON     ");
                         strcpy(display_line[2], "          ");
@@ -230,7 +235,7 @@ void main(void){
                                 UCA1IE |= UCTXIE;
                                 initial_process = 2;
                                 response_parse = 0;
-                                //                    legacy = 0;
+
                                 while (IOT_Ring_Rx[vv] == 0x00){
                                     IOT_Ring_Rx[vv++] = 0;
                                 }
@@ -243,7 +248,7 @@ void main(void){
                         display_changed = TRUE;
                         if (iot_TX_buf[response_parse++] == '\r'){
                             if (iot_TX_buf[response_parse-2] == 'K'){
-                                legacy = 0;
+                                tx_index = 0;
                                 strcpy(IOT_Ring_Rx, update_conn_sett);
                                 UCA1IE |= UCTXIE;
                                 initial_process = 3;
@@ -253,8 +258,8 @@ void main(void){
                         if (response_parse > 31){
                             response_parse = 0;
                         }
-                        if (legacy > 31){
-                            legacy = 0;
+                        if (tx_index > 31){
+                            tx_index = 0;
                         }
                         break;
                     case 3:
@@ -264,7 +269,7 @@ void main(void){
                         if (iot_TX_buf[response_parse++] == '\r'){
                             vv = 0;
                             if (iot_TX_buf[response_parse-10] == 'X'){
-                                legacy = 0;
+                                tx_index = 0;
                                 strcpy(IOT_Ring_Rx, conf_server);
                                 UCA1IE |= UCTXIE;
                                 initial_process = 4;
@@ -274,8 +279,8 @@ void main(void){
                         if (response_parse > 31){
                             response_parse = 0;
                         }
-                        if (legacy > 31){
-                            legacy = 0;
+                        if (tx_index > 31){
+                            tx_index = 0;
                         }
                         break;
                     case 4:
@@ -286,7 +291,7 @@ void main(void){
                             vv = 0;
                             //                if (response_parse-9 < 0){
                             if (iot_TX_buf[response_parse + 23] == '8'){
-                                legacy = 0;
+                                tx_index = 0;
                                 strcpy(IOT_Ring_Rx, SSID_access);
                                 UCA1IE |= UCTXIE;
                                 initial_process = 5;
@@ -296,8 +301,8 @@ void main(void){
                         if (response_parse > 31){
                             response_parse = 0;
                         }
-                        if (legacy > 31){
-                            legacy = 0;
+                        if (tx_index > 31){
+                            tx_index = 0;
                         }
                         break;
                     case 5:
@@ -315,11 +320,11 @@ void main(void){
                         vv= 0;
                         strcpy(display_line[3], "    6     ");
                         display_changed = TRUE;
-                        //            if (command4_flag){
+
                         if (iot_TX_buf[response_parse++] == '\r'){
                             vv = 0;
                             if (iot_TX_buf[response_parse-9] == ','){
-                                legacy = 0;
+                                tx_index = 0;
                                 strcpy(IOT_Ring_Rx, IP_access);
                                 UCA1IE |= UCTXIE;
                                 initial_process = 7;
@@ -339,8 +344,8 @@ void main(void){
                         if (response_parse > 31){
                             response_parse = 0;
                         }
-                        if (legacy > 31){
-                            legacy = 0;
+                        if (tx_index > 31){
+                            tx_index = 0;
                         }
                         break;
                     case 7:
@@ -351,7 +356,7 @@ void main(void){
                         if (iot_TX_buf[response_parse++] == '\r'){
                             vv = 0;
                             if (iot_TX_buf[response_parse-8] == '"'){
-                                legacy = 0;
+                                tx_index = 0;
                                 strcpy(IOT_Ring_Rx, check_okay);
                                 UCA1IE |= UCTXIE;
                                 initial_process = 8;
@@ -371,8 +376,8 @@ void main(void){
                         if (response_parse > 31){
                             response_parse = 0;
                         }
-                        if (legacy > 31){
-                            legacy = 0;
+                        if (tx_index > 31){
+                            tx_index = 0;
                         }
                         break;
                     case 8:
@@ -387,6 +392,21 @@ void main(void){
                 }
                 break;
             case 1:
+//                if(Circlecount > (10*TWENTYSEC)){
+//                    strcpy(display_line[0], " BL  STOP ");
+//                    display_changed = TRUE;
+//                }
+                if(movementcount >= 3000){
+                    commanding_send = WAIT;
+
+                    run_time_flag = 0;
+                    motor_off();
+                    run_time = 0;
+                    movement = 0;
+
+                }
+
+                pingpong();
                 vv = 0;
                 if (iot_TX_buf[response_parse++] == '^'){
                     //            response_parse++;
@@ -394,91 +414,128 @@ void main(void){
                         response_parse = response_parse +4;
                         switch (iot_TX_buf[response_parse]){
                         case 'F':
-                            if(movement){
+                            if(!movement){
+
+                            setTime = (int)iot_TX_buf[response_parse+1]-'0';
+
+                            switch(setTime){
+                            case 3:
+                                setTime = 17;
                                 break;
+                            case 4:
+                                setTime = 18;
+                            break;
+                            case 5:
+                                setTime = 20;
+                            break;
+                            case 6:
+                                setTime = 25;
+                                break;
+                            case 7:
+                                setTime = 30;
+                                break;
+                            case 8:
+                                setTime = 40;
+                                break;
+                            case 9:
+                                setTime = 80;
+                                strcpy(display_line[0], " FINISHED ");
+                                    display_changed = TRUE;
+                                break;
+                            default: break;
+
                             }
-                            setTime = (int)iot_TX_buf[response_parse+1];
                             run_time_flag = 1;
-                            command_op = FORWARDS;
+                            commanding_send = FORWARDS;
                             run_time = 0;
                             for (vv = 0; vv < 32; vv++){
                                 iot_TX_buf[vv] = 0;
                             }
+                            }
+
                             break;
                         case 'B':
-                            if(movement){
-                                break;
+                            if(!movement){
+                            setTime = (int)iot_TX_buf[response_parse+1]-'0';
+                            if(setTime == 9){
+                                setTime = ((3*9)-2);
                             }
-                            setTime = (int)iot_TX_buf[response_parse+1];
                             run_time_flag = 1;
-                            command_op = BACK;
+                            commanding_send = BACK;
                             run_time = 0;
                             for (vv = 0; vv < 32; vv++){
                                 iot_TX_buf[vv] = 0;
+                            }
                             }
                             break;
                         case 'R':
-                            if(movement){
-                                break;
-                            }
-                            setTime = (int)iot_TX_buf[response_parse+1];
+                            if(!movement){
+                            setTime = (int)iot_TX_buf[response_parse+1]-'0';
                             run_time_flag = 1;
-                            command_op = RIGHT;
+                            commanding_send = RIGHT;
                             run_time = 0;
                             for (vv = 0; vv < 32; vv++){
                                 iot_TX_buf[vv] = 0;
+                            }
                             }
                             break;
                         case 'L':
-                            if(movement){
-                                break;
-                            }
-                            setTime = (int)iot_TX_buf[response_parse+1];
+                            if(!movement){
+                            setTime = (int)iot_TX_buf[response_parse+1]-'0';
                             run_time_flag = 1;
-                            command_op = LEFT;
+                            commanding_send = LEFT;
                             run_time = 0;
                             for (vv = 0; vv < 32; vv++){
                                 iot_TX_buf[vv] = 0;
+                            }
                             }
                             break;
 
                         case 'S':
-                            if(movement){
-                                break;
-                            }
-                            setTime = (int)iot_TX_buf[response_parse+1];
-                            command_op = WAIT;
+                            if(!movement){
+                            setTime = (int)iot_TX_buf[response_parse+1]-'0';
+                            commanding_send = WAIT;
                             run_time = 0;
 
                             for (vv = 0; vv < 32; vv++){
                                 iot_TX_buf[vv] = 0;
+                            }
                             }
                             break;
 
                         case 'I':
-                            if(movement){
-                                break;
-                            }
-                            setTime = (int)iot_TX_buf[response_parse+1];
-                            command_op = INTERCEPT;
+                            if(!movement){
+                            setTime = (int)iot_TX_buf[response_parse+1]-'0';
+                            commanding_send = INTERCEPT;
                             run_time = 0;
 
                             for (vv = 0; vv < 32; vv++){
                                 iot_TX_buf[vv] = 0;
+                            }
                             }
                             break;
 
                         case 'A':
-                            if(movement){
-                                break;
-                            }
+                            if(!movement){
                             setTime = 10;
                             sheet = iot_TX_buf[response_parse+1];
-                            command_op = ARRIVED;
+                            commanding_send = ARRIVED;
                             run_time = 0;
 
                             for (vv = 0; vv < 32; vv++){
                                 iot_TX_buf[vv] = 0;
+                            }
+                            }
+                            break;
+                        case 'H':
+                            if(!movement){
+                                setTime = (int)iot_TX_buf[response_parse+1]-'0';
+                                commanding_send = EXIT;
+                                run_time = 0;
+
+                                for (vv = 0; vv < 32; vv++){
+                                    iot_TX_buf[vv] = 0;
+                                }
                             }
                             break;
 
@@ -491,30 +548,37 @@ void main(void){
                 }
 
                 char tempStr[10];
-                switch (command_op){
+                switch (commanding_send){
                 case WAIT:
                     motor_off();
-                    if (run_time < 50){
-                        strcpy(display_line[0], "          ");
-                        display_changed = TRUE;
-                        dispPrint("IP address", '2');
-                        //                strcpy(display_line[1], " RUN CASE ");
-                        strcpy(display_line[0], "          ");
-                        display_changed = TRUE;
-                        //                strcpy(display_line[0], ssid_display);
-                        //                strcpy(display_line[0], "ncsu      ");
-                        dispPrint(ssid_display, '1');
-                        dispPrint(ip_display1, '3');
-                        dispPrint(ip_display2, '4');
-                        //                strcpy(display_line[2], ip_display1);
-                        //                strcpy(display_line[3], ip_display2);
+                    if(setTime == 80){
+                        strcpy(display_line[3], " BL  STOP ");
                         display_changed = TRUE;
                     }
                     else{
-                        strcpy(display_line[1], " WAITDONE ");
-                        strcpy(display_line[3], "         W");
-                        display_changed = TRUE;
-                        //                run_time = 0;
+
+                        if (run_time < 50){
+                            strcpy(display_line[0], "          ");
+                            display_changed = TRUE;
+                            dispPrint("IP address", '2');
+                            //                strcpy(display_line[1], " RUN CASE ");
+                            strcpy(display_line[0], "          ");
+                            display_changed = TRUE;
+                            //                strcpy(display_line[0], ssid_display);
+                            //                strcpy(display_line[0], "ncsu      ");
+                            dispPrint(ssid_display, '1');
+                            dispPrint(ip_display1, '3');
+                            dispPrint(ip_display2, '4');
+                            //                strcpy(display_line[2], ip_display1);
+                            //                strcpy(display_line[3], ip_display2);
+                            display_changed = TRUE;
+                        }
+                        else{
+                            strcpy(display_line[1], " WAITDONE ");
+                            strcpy(display_line[3], "         W");
+                            display_changed = TRUE;
+                            //                run_time = 0;
+                        }
                     }
 
                     break;
@@ -528,7 +592,7 @@ void main(void){
                         run_time_flag = 0;
                         motor_off();
                         run_time = 0;
-                        command_op = WAIT;
+                        commanding_send = WAIT;
                         movement = 0;
                     }
                     break;
@@ -542,7 +606,7 @@ void main(void){
                         run_time_flag = 0;
                         motor_off();
                         run_time = 0;
-                        command_op = WAIT;
+                        commanding_send = WAIT;
                         movement = 0;
                     }
                     break;
@@ -557,7 +621,7 @@ void main(void){
                         run_time_flag = 0;
                         motor_off();
                         run_time = 0;
-                        command_op = WAIT;
+                        commanding_send = WAIT;
                         movement = 0;
                     }
                     break;
@@ -571,7 +635,7 @@ void main(void){
                         run_time_flag = 0;
                         motor_off();
                         run_time = 0;
-                        command_op = WAIT;
+                        commanding_send = WAIT;
                         movement = 0;
                     }
 
@@ -603,11 +667,26 @@ void main(void){
                         run_time_flag = 0;
                         motor_off();
                         run_time = 0;
-                        command_op = WAIT;
+                        commanding_send = WAIT;
                         movement = 0;
                     }
 
                     break;
+                case EXIT:
+
+                    if(setTime == 0){
+                        state = LEFT;
+                    }
+                    else{
+                        state = RIGHT;
+                    }
+                    exit_state();
+                    strcpy(display_line[0], " BL  EXIT ");
+                    display_changed = TRUE;
+
+
+                    break;
+
                 default: break;
                 }
                 break;
@@ -688,7 +767,16 @@ void blacklinemachine(void){
     switch(state){
     case WAIT:
         Off_Case();
-        state = START;
+        state = STRAIGHTLINE;
+        break;
+    case STRAIGHTLINE:
+        straightline();
+        break;
+    case STRAIGHTWAIT:
+        straightwait();
+        break;
+    case SEMICIRCLERT:
+        semicirclert();
         break;
     case START:
         start_movement();
@@ -705,18 +793,40 @@ void blacklinemachine(void){
     case TRACK:
         tracking_movement();
         break;
+    case STRAIGHTW:
+        straightsecond();
+        break;
     case END:
         end_state();
 
         run_time_flag = 0;
         run_time = 0;
-        command_op = WAIT;
+        commanding_send = WAIT;
         movement = 0;
 
         break;
     default: break;
     }
 }
+
+void exit_state(void){
+    switch(state){
+    case RIGHT:
+        rightexit();
+        break;
+    case LEFT:
+        leftexit();
+        break;
+    case WAITS:
+        waits();
+        break;
+    case STRAIGHTEXIT:
+        straight_exit();
+        break;
+    default: break;
+    }
+}
+
 
 
 

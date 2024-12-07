@@ -11,7 +11,7 @@
 #define WHEEL_COUNT_TIME (10)
 #define RIGHT_COUNT_TIME (7)
 #define LEFT_COUNT_TIME (8)
-#define TRAVEL_DISTANCE (2)
+//#define TRAVEL_DISTANCE (2)
 #define WAITING2START (50)
 #define ONESEC (5)
 
@@ -19,6 +19,18 @@
 #define NONE ('N')
 #define FORWARD ('F')
 #define REVERSE ('R')
+
+
+
+#define DETECTED ('D')
+#define SPIN ('O')
+#define TRACK ('T')
+#define TRACKWAIT ('K')
+#define STRAIGHTLINE ('U')
+#define STRAIGHTWAIT ('V')
+#define SEMICIRCLERT ('M')
+#define STRAIGHTEXIT ('^')
+#define WAITS ('#')
 
 
 #define FALSE (0)
@@ -32,16 +44,33 @@
 #define RIGHT (1)
 #define LEFT (0)
 
-
-#define PAUSE (200)
-#define FORWARDSPEED (12000)
+#define STRAIGHTDIST (80)
+#define STRAIGHTDISTW (30)
+//#define SEMICIRCLEDIST (40)
+#define SEMICIRCLEDIST (11)
+#define PAUSE (40)
+#define FORWARDSPEED (15000)
 #define SPINSPEED (15000)
-#define TURNSPEED (10000)
-#define SPEED1 (10000)
-#define STRAIGHTMOVE (10000)
+#define SPINSPEEDRT (15000)
+#define TURNSPEED (18000)
+#define SPEED1 (15000)
+#define STRAIGHTMOVE (18000)
+#define STRAIGHTLEFT (20000)
+#define STRAIGHTRIGHT (20000)
 
-#define FIFTYSEC (2500)
+#define STRAIGHTW ('@')
 
+#define BEGINCIRCLE (4000)
+
+
+
+#define SEMICIRRRT (30000)
+#define SEMICIRRLT (14000)
+
+#define TWENTYSEC (4000)
+#define TWOMIN (2400)
+
+#define MOTORAHEAD (20)
 
 
 
